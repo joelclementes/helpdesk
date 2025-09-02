@@ -16,6 +16,20 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                vino: {
+                    50: '#f9f2f5',
+                    100: '#f3e6ec',
+                    200: '#e6ccd9', // equivalente a "200"
+                    300: '#d9b3c6',
+                    400: '#cc99b3',
+                    500: '#bf80a0',
+                    600: '#a65c80',
+                    700: '#8c3360',
+                    800: '#731a40',
+                    900: '#6C143A', // tu color principal más intenso
+                }
+            }
         },
     },
 

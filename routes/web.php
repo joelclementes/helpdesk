@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('dashboard');
+    // return view('dashboard');
+    return view('mesadecontrol');
 })->middleware('auth');
 
 Route::middleware([
@@ -23,6 +24,15 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        // return view('dashboard');
+        return view('mesadecontrol');
     })->name('dashboard');
+
+    Route::get('/mesadecontrol', function () {
+        return view('mesadecontrol');
+    })->name('mesadecontrol');
+
+    Route::get('/estadisticas', function () {
+        return view('estadisticas');
+    })->name('estadisticas');
 });
