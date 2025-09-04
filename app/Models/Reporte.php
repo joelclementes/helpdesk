@@ -12,7 +12,7 @@ class Reporte extends Model
 
     protected $fillable = [
         'solicitante', 'descripcion', 'categoria_id', 'estado_id',
-        'departamento_id', 'capturo_user_id', 'area_id', 'tecnico_user_id',
+        'departamento_congreso_id', 'capturo_user_id', 'area_informatica_id', 'tecnico_user_id',
         'closed_at'
     ];
 

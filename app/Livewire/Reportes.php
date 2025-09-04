@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\{Reporte,DepartamentoCongreso,AreasInformatica,Categoria,User};
+use App\Models\{Reporte, DepartamentoCongreso, AreasInformatica, Categoria, User};
 
 
 class Reportes extends Component
@@ -17,18 +17,25 @@ class Reportes extends Component
 
     // Formulario
     public array $nuevoReporte = [
+        'departamento_id'   => '',
         'solicitante'   => '',
         'descripcion'   => '',
+        'area_informatica_id' => '',
         'categoria_id'  => '',
-        // agrega otros campos si los necesitas
+        'tecnico_id'    => '',
+        'numero_copias'  => '',
     ];
 
     public function rules()
     {
         return [
-            'nuevoReporte.solicitante'  => 'required|string|max:255',
-            'nuevoReporte.descripcion'  => 'required|string|min:3',
-            'nuevoReporte.categoria_id' => 'required|exists:categorias,id',
+            'nuevoReporte.departamento_id'      => 'required|exists:departamento_congreso,id',
+            'nuevoReporte.solicitante'          => 'required|string|max:255',
+            'nuevoReporte.descripcion'          => 'required|string|min:3',
+            'nuevoReporte.area_informatica_id'  => 'required|exists:area_informatica,id',
+            'nuevoReporte.categoria_id'         => 'required|exists:categorias,id',
+            'nuevoReporte.tecnico_id'           => 'nullable|exists:users,id',
+            'nuevoReporte.numero_copias'        => 'nullable|integer|min:1',
         ];
     }
 
@@ -47,18 +54,24 @@ class Reportes extends Component
     {
         $this->validate();
 
+        // dd($this->nuevoReporte);
+
         Reporte::create([
-            'solicitante'     => $this->nuevoReporte['solicitante'],
-            'descripcion'     => $this->nuevoReporte['descripcion'],
-            'categoria_id'    => $this->nuevoReporte['categoria_id'],
-            'capturo_user_id' => auth()->id(),
-            'estado_id'       => 1, // ajusta al estado inicial que uses
+            'departamento_congreso_id' => $this->nuevoReporte['departamento_id'],
+            'solicitante'              => $this->nuevoReporte['solicitante'],
+            'descripcion'              => $this->nuevoReporte['descripcion'],
+            'area_informatica_id'      => $this->nuevoReporte['area_informatica_id'],
+            'categoria_id'             => $this->nuevoReporte['categoria_id'],
+            'tecnico_user_id'          => $this->nuevoReporte['tecnico_id'] ?: null,
+            'capturo_user_id'          => auth()->id(),
+            'estado_id'                => 1,
+            'numero_copias'            => $this->nuevoReporte['numero_copias'] ?: null,
         ]);
 
         $this->reset('nuevoReporte');
         $this->cerrarModalCrear();
         session()->flash('ok', 'Reporte creado con éxito.');
-        $this->resetPage(); // vuelve a la primera página para ver el nuevo
+        $this->resetPage();
     }
 
     public function render()
@@ -68,55 +81,10 @@ class Reportes extends Component
         $categorias = Categoria::orderBy('name')->get();
         $tecnicos = User::orderBy('name')->get();
 
-        $reportes = Reporte::with(['categoria','tecnico','comentarios.user'])
+        $reportes = Reporte::with(['categoria', 'tecnico', 'comentarios.user'])
             ->latest()
             ->paginate(10);
 
-        return view('livewire.reportes', compact('reportes','departamentos','areasInformatica','categorias','tecnicos'));
+        return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos'));
     }
-
-
-    // use WithPagination;
-
-    // public $reportes;
-
-    // public $nuevoReporte = [
-    //     'solicitante' => '',
-    //     'descripcion' => '',
-    //     'categoria_id' => '',
-    // ];
-
-    // public function mount()
-    // {
-    //     $this->reportes = Reporte::all();
-    // }
-
-    // public function render()
-    // {
-    //     $reportes = Reporte::with(['categoria', 'tecnico', 'comentarios.user'])
-    //         ->latest()
-    //         ->paginate(10);
-    //         $categorias = Categoria::all();
-    //     return view('livewire.reportes', compact('reportes','categorias'));
-    // }
-
-    // public function guardarNuevoReporte(){
-    //     $this->validate([
-    //         'nuevoReporte.solicitante' => 'required|string|max:255',
-    //         'nuevoReporte.descripcion' => 'required|string',
-    //         'nuevoReporte.categoria_id' => 'required|exists:categorias,id',
-    //     ]);
-
-    //     Reporte::create([
-    //         'solicitante' => $this->nuevoReporte['solicitante'],
-    //         'descripcion' => $this->nuevoReporte['descripcion'],
-    //         'categoria_id' => $this->nuevoReporte['categoria_id'],
-    //         'estado_id' => 1, // Estado "Abierto"
-    //     ]);
-
-    //     $this->reset('nuevoReporte');
-    //     session()->flash('mensaje', 'Reporte creado exitosamente.');
-    // }
-
-
 }

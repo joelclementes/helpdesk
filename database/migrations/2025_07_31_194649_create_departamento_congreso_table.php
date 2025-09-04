@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departamentos_congreso', function (Blueprint $table) {
+        Schema::create('departamento_congreso', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('extension')->nullable();
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('departamento_congresos');
+        Schema::dropIfExists('departamento_congreso');
     }
 };

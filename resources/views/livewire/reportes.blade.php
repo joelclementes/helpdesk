@@ -1,39 +1,3 @@
-{{-- <div class="max-w-2xl mx-auto px-4">
-
-    <div class="bg-white shadow rounded-lg overflow-hidden border border-vino-200 mb-6">
-        <div class="px-4 py-3 bg-gray-100 border-b">
-            <h3 class="font-semibold text-gray-800 text-sm">Nuevo Reporte</h3>
-        </div>
-
-        <div class="px-4 py-4 space-y-3">
-            <input type="text" wire:model.defer="nuevoReporte.solicitante" 
-                placeholder="Solicitante" 
-                class="w-full rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-
-            <textarea wire:model.defer="nuevoReporte.descripcion" 
-                placeholder="Descripción" 
-                class="w-full rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm"></textarea>
-
-            <select wire:model.defer="nuevoReporte.categoria_id" 
-                class="w-full rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                <option value="">Selecciona una categoría</option>
-                @foreach ($categorias as $cat)
-                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                @endforeach
-            </select>
-
-            <button wire:click="guardarNuevoReporte" 
-                class="w-full bg-gray-400 hover:bg-vino-800 text-white py-2 rounded-md text-sm font-semibold">
-                Guardar Reporte
-            </button>
-        </div>
-    </div>
-
-    @foreach ($reportes as $reporte)
-        <livewire:reportes-item :reporte="$reporte" :key="$reporte->id" />
-    @endforeach
-</div> --}}
-
 <div class="max-w-2xl mx-auto px-4 space-y-6">
 
     {{-- Feedback --}}
@@ -60,7 +24,7 @@
 
     {{-- Listado de cards existentes --}}
     @foreach ($reportes as $reporte)
-        <livewire:reportes-item :reporte="$reporte" :key="$reporte->id" />
+        <livewire:reportes-item :reporte="$reporte" :key="'reportes-item-' . $reporte->id" />
     @endforeach
 
     <div>
@@ -68,7 +32,7 @@
     </div>
 
     {{-- MODAL: Crear reporte --}}
-    <x-dialog-modal wire:model="showCreateModal">
+    <x-dialog-modal wire:model="showCreateModal" wire:key="create-reporte-modal" wire:ignore.self>
         <x-slot name="title">
             Nuevo Reporte
         </x-slot>
@@ -91,8 +55,8 @@
                 {{-- Solicitante --}}
                 <div>
                     <x-label value="Solicitante" />
-                    <x-input type="text" wire:model.defer="nuevoReporte.solicitante" class="border-vino-300 w-full mt-1"
-                        placeholder="Nombre del solicitante" />
+                    <x-input type="text" wire:model.defer="nuevoReporte.solicitante"
+                        class="border-vino-300 w-full mt-1" placeholder="Nombre del solicitante" />
                     <x-input-error for="nuevoReporte.solicitante" class="mt-1" />
                 </div>
 
@@ -147,8 +111,8 @@
                 {{-- Número de copias/en su caso --}}
                 <div>
                     <x-label value="Número de copias/en su caso" />
-                    <x-input type="number" wire:model.defer="nuevoReporte.numero_copias" class="border-vino-300 w-full mt-1"
-                        placeholder="Número de copias" />
+                    <x-input type="number" wire:model.defer="nuevoReporte.numero_copias"
+                        class="border-vino-300 w-full mt-1" placeholder="Número de copias" />
                     <x-input-error for="nuevoReporte.numero_copias" class="mt-1" />
                 </div>
             </div>

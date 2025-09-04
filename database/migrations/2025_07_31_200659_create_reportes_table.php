@@ -16,13 +16,16 @@ return new class extends Migration
             $table->bigInteger('departamento_congreso_id')->unsigned();
             $table->string('solicitante');
             $table->string('descripcion');
+            $table->bigInteger('area_informatica_id')->unsigned();
             $table->bigInteger('categoria_id')->unsigned();
             $table->bigInteger('capturo_user_id')->unsigned();
             $table->bigInteger('tecnico_user_id')->nullable();
+            $table->bigInteger('numero_copias')->nullable();
             $table->bigInteger('estado_id')->unsigned();
             $table->timestamps();
             $table->timestamp('closed_at')->nullable();
-            $table->foreign('departamento_congreso_id')->references('id')->on('departamentos_congreso')->onDelete('cascade');
+            $table->foreign('departamento_congreso_id')->references('id')->on('departamento_congreso')->onDelete('cascade');
+            $table->foreign('area_informatica_id')->references('id')->on('area_informatica')->onDelete('cascade');
             $table->foreign('estado_id')->references('id')->on('estados')->onDelete('cascade');
         });
     }
