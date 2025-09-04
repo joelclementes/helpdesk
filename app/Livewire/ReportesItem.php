@@ -9,10 +9,35 @@ class ReportesItem extends Component
 {
     public Reporte $reporte;
 
-    public function atender() { $this->reporte->estado_id = 2; $this->reporte->save(); }
-    public function cerrar()  { $this->reporte->estado_id = 3; $this->reporte->closed_at = now(); $this->reporte->save(); }
-    public function cancelar(){ $this->reporte->estado_id = 4; $this->reporte->save(); }
-    public function comentar(){ $this->dispatch('abrirModalComentario', id: $this->reporte->id); }
+    public function atender()
+    {
+        $this->dispatch('abrirModalAtendido', id: $this->reporte->id);
+    }
+
+    public function cerrar()
+    {
+        // Abrir modal de confirmación en el padre
+        $this->dispatch('abrirModalCerrar', id: $this->reporte->id);
+    }
+
+    public function cancelar()
+    {
+        $this->dispatch('abrirModalCancelar', id: $this->reporte->id);
+    }
+
+    public function comentar()
+    {
+        $this->dispatch('abrirModalComentario', id: $this->reporte->id);
+    }
+
+    protected $listeners = ['refrescarComentarios'];
+
+    public function refrescarComentarios(int $id)
+    {
+        if ($id === $this->reporte->id) {
+            $this->reporte->refresh()->load(['categoria', 'estado','tecnico','comentarios.user']);
+        }
+    }
 
     public function render()
     {

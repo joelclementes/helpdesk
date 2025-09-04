@@ -128,4 +128,184 @@
             </x-button>
         </x-slot>
     </x-dialog-modal>
+
+    {{-- MODAL: Comentar --}}
+    <x-dialog-modal wire:model="showComentarioModal" wire:key="comentario-modal" wire:ignore.self>
+        <x-slot name="title">
+            Agregar comentario
+        </x-slot>
+
+        <x-slot name="content">
+            <div class="space-y-3">
+                @if ($comentarioReporteId)
+                    <p class="text-xs text-gray-500">
+                        Reporte #{{ $comentarioReporteId }}
+                    </p>
+                @endif
+
+                <div>
+                    <x-label value="Comentario" />
+                    <textarea wire:model.defer="comentarioTexto" rows="4"
+                        class="w-full mt-1 rounded-md border-gray-300 focus:border-vino-500 focus:ring-vino-500 text-sm"
+                        placeholder="Escribe tu comentario..."></textarea>
+                    <x-input-error for="comentarioTexto" class="mt-1" />
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="cerrarModalComentario" class="me-2">
+                Cancelar
+            </x-secondary-button>
+
+            <x-button wire:click="guardarComentario" class="bg-vino-700 hover:bg-vino-800">
+                Publicar
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
+
+    {{-- MODAL: Atendido --}}
+    <x-dialog-modal wire:model="showAtendidoModal" wire:key="atendido-modal" wire:ignore.self>
+        <x-slot name="title">
+            Marcar reporte como Atendido
+        </x-slot>
+
+        <x-slot name="content">
+            <div class="space-y-4">
+                <p class="text-sm text-gray-600">
+                    Selecciona la categoría y el técnico que atenderá el reporte.
+                </p>
+
+                {{-- Categoría --}}
+                <div>
+                    <x-label value="Categoría" />
+                    <select wire:model.defer="atendidoCategoriaId"
+                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                        <option value="">Selecciona una categoría</option>
+                        @foreach ($categorias as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error for="atendidoCategoriaId" class="mt-1" />
+                </div>
+
+                {{-- Técnico --}}
+                <div>
+                    <x-label value="Técnico asignado" />
+                    <select wire:model.defer="atendidoTecnicoId"
+                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                        <option value="">Selecciona un técnico</option>
+                        @foreach ($tecnicos as $tec)
+                            <option value="{{ $tec->id }}">{{ $tec->name }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error for="atendidoTecnicoId" class="mt-1" />
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="cerrarModalAtendido" class="me-2">
+                Cancelar
+            </x-secondary-button>
+
+            <x-button wire:click="guardarAtendido" class="bg-vino-700 hover:bg-vino-800">
+                Guardar
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
+    {{-- MODAL: Atendido --}}
+    {{-- <x-dialog-modal wire:model="showAtendidoModal" wire:key="atendido-modal" wire:ignore.self>
+        <x-slot name="title">
+            Marcar reporte como Atendido
+        </x-slot>
+
+        <x-slot name="content">
+            <div class="space-y-4">
+                <p class="text-sm text-gray-600">
+                    Selecciona la categoría actualizada para este reporte.
+                </p>
+
+                <div>
+                    <x-label value="Categoría" />
+                    <select wire:model.defer="atendidoCategoriaId"
+                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                        <option value="">Selecciona una categoría</option>
+                        @foreach ($categorias as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error for="atendidoCategoriaId" class="mt-1" />
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="cerrarModalAtendido" class="me-2">
+                Cancelar
+            </x-secondary-button>
+
+            <x-button wire:click="guardarAtendido" class="bg-vino-700 hover:bg-vino-800">
+                Guardar
+            </x-button>
+        </x-slot>
+    </x-dialog-modal> --}}
+
+    {{-- MODAL: Confirmar cierre --}}
+    <x-dialog-modal wire:model="showCerrarModal" wire:key="cerrar-modal" wire:ignore.self>
+        <x-slot name="title">
+            Confirmar cierre
+        </x-slot>
+
+        <x-slot name="content">
+            <p class="text-sm text-gray-700">
+                ¿Seguro que deseas <strong>cerrar</strong> este reporte?
+            </p>
+            @if ($cerrarReporteId)
+                <p class="text-xs text-gray-500 mt-2">
+                    ID del reporte: #{{ $cerrarReporteId }}
+                </p>
+            @endif
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="cerrarModalCerrar" class="me-2">
+                Cancelar
+            </x-secondary-button>
+
+            <x-button wire:click="confirmarCierre" class="bg-vino-700 hover:bg-vino-800">
+                Sí, cerrar
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
+    {{-- MODAL: Confirmar cancelación --}}
+    <x-dialog-modal wire:model="showCancelarModal" wire:key="cancelar-modal" wire:ignore.self>
+        <x-slot name="title">
+            Confirmar cancelación
+        </x-slot>
+
+        <x-slot name="content">
+            <p class="text-sm text-gray-700">
+                ¿Seguro que deseas <strong>cancelar</strong> este reporte?
+            </p>
+            @if ($cancelarReporteId)
+                <p class="text-xs text-gray-500 mt-2">
+                    ID del reporte: #{{ $cancelarReporteId }}
+                </p>
+            @endif
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="cerrarModalCancelar" class="me-2">
+                No, regresar
+            </x-secondary-button>
+
+            <x-button wire:click="confirmarCancelar" class="bg-vino-700 hover:bg-vino-800">
+                Sí, cancelar
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

@@ -128,7 +128,7 @@ class UsuariosSeeder extends Seeder
             ],
             [
                 'user_data' => [
-                    'name' => 'Miguel ángel Hernández',
+                    'name' => 'Miguel Ángel Hernández',
                     'email' => 'mhernandez@prueba.com',
                     'area_id' => 4,
                     'password' => bcrypt('123456789'),

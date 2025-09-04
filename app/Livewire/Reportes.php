@@ -4,8 +4,9 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\{Reporte, DepartamentoCongreso, AreasInformatica, Categoria, User};
+use App\Models\{Reporte, Comentario, DepartamentoCongreso, AreasInformatica, Categoria, User};
 
+use Livewire\Attributes\On;
 
 class Reportes extends Component
 {
@@ -14,6 +15,27 @@ class Reportes extends Component
 
     // Modal
     public bool $showCreateModal = false;
+
+
+
+    // Modal Atendido
+    public bool $showAtendidoModal = false;
+    public ?int $atendidoReporteId = null;
+    public ?int $atendidoCategoriaId = null;
+    public ?int $atendidoTecnicoId = null;
+
+    // --- estado del modal Cerrar ---
+    public bool $showCerrarModal = false;
+    public ?int $cerrarReporteId = null;
+
+    // 🆕 Modal comentar
+    public bool $showComentarioModal = false;
+    public ?int $comentarioReporteId = null;
+    public string $comentarioTexto = '';
+
+    // Modal Cancelar
+    public bool $showCancelarModal = false;
+    public ?int $cancelarReporteId = null;
 
     // Formulario
     public array $nuevoReporte = [
@@ -34,10 +56,89 @@ class Reportes extends Component
             'nuevoReporte.descripcion'          => 'required|string|min:3',
             'nuevoReporte.area_informatica_id'  => 'required|exists:area_informatica,id',
             'nuevoReporte.categoria_id'         => 'required|exists:categorias,id',
-            'nuevoReporte.tecnico_id'           => 'nullable|exists:users,id',
+            'nuevoReporte.tecnico_id'           => 'required|exists:users,id',
             'nuevoReporte.numero_copias'        => 'nullable|integer|min:1',
         ];
     }
+
+
+    protected $listeners = ['abrirModalAtendido', 'cerrarModalAtendido', 'guardarAtendido', 'abrirModalComentario', 'refrescarComentarios', 'abrirModalCerrar', 'abrirModalCancelar'];
+
+    public function abrirModalAtendido(int $id)
+    {
+        $reporte = Reporte::findOrFail($id);
+        $reporte = \App\Models\Reporte::findOrFail($id);
+
+        $this->atendidoReporteId   = $id;
+        $this->atendidoCategoriaId = $reporte->categoria_id;     // preselecciona la actual
+        $this->atendidoTecnicoId   = $reporte->tecnico_user_id;  // preselecciona el actual
+
+        $this->resetValidation();
+        $this->showAtendidoModal = true;
+
+
+        // $this->atendidoReporteId = $id;
+
+        // // carga la categoría actual del reporte
+        // $this->atendidoCategoriaId = Reporte::find($id)?->categoria_id;
+
+        // $this->resetValidation();
+        // $this->showAtendidoModal = true;
+    }
+
+    public function cerrarModalAtendido()
+    {
+        $this->showAtendidoModal = false;
+        $this->atendidoReporteId = null;
+        $this->atendidoCategoriaId = null;
+        $this->atendidoTecnicoId = null;
+    }
+
+    public function guardarAtendido()
+    {
+
+        $this->validate([
+            'atendidoCategoriaId' => 'required|exists:categorias,id',
+            'atendidoTecnicoId'   => 'required|exists:users,id',
+        ], [
+            'atendidoCategoriaId.required' => 'Debes seleccionar una categoría.',
+            'atendidoCategoriaId.exists'   => 'La categoría seleccionada no es válida.',
+            'atendidoTecnicoId.required'   => 'Debes seleccionar un técnico.',
+            'atendidoTecnicoId.exists'     => 'El técnico seleccionado no es válido.',
+        ]);
+
+        $reporte = \App\Models\Reporte::findOrFail($this->atendidoReporteId);
+
+        $reporte->estado_id       = 2; // Atendido
+        $reporte->categoria_id    = $this->atendidoCategoriaId;
+        $reporte->tecnico_user_id = $this->atendidoTecnicoId;
+        $reporte->save();
+
+        // refrescar la card del hijo
+        $this->dispatch('refrescarComentarios', id: $reporte->id);
+
+        $this->cerrarModalAtendido();
+        session()->flash('ok', 'Reporte marcado como Atendido. Categoría y técnico actualizados.');
+
+        // $this->validate([
+        //     'atendidoCategoriaId' => 'required|exists:categorias,id',
+        // ], [
+        //     'atendidoCategoriaId.required' => 'Debes seleccionar una categoría.',
+        //     'atendidoCategoriaId.exists'   => 'La categoría seleccionada no es válida.',
+        // ]);
+
+        // $reporte = Reporte::findOrFail($this->atendidoReporteId);
+        // $reporte->estado_id = 2; // Atendido
+        // $reporte->categoria_id = $this->atendidoCategoriaId;
+        // $reporte->save();
+
+        // // refrescar el hijo
+        // $this->dispatch('refrescarComentarios', id: $reporte->id);
+
+        // $this->cerrarModalAtendido();
+        // session()->flash('ok', 'Reporte marcado como Atendido y categoría actualizada.');
+    }
+
 
     public function abrirModalCrear()
     {
@@ -74,6 +175,104 @@ class Reportes extends Component
         $this->resetPage();
     }
 
+
+    public function abrirModalComentario(int $id)
+    {
+        $this->comentarioReporteId = $id;
+        $this->comentarioTexto = '';
+        $this->resetValidation();
+        $this->showComentarioModal = true;
+    }
+
+    public function cerrarModalComentario()
+    {
+        $this->showComentarioModal = false;
+        $this->comentarioReporteId = null;
+        $this->comentarioTexto = '';
+    }
+
+    public function guardarComentario()
+    {
+        $this->validate([
+            'comentarioTexto' => 'required|string|min:2|max:2000',
+            'comentarioReporteId' => 'required|exists:reportes,id',
+        ], [
+            'comentarioTexto.required' => 'Escribe tu comentario.',
+            'comentarioTexto.min'      => 'El comentario es muy corto.',
+        ]);
+
+        Comentario::create([
+            'reporte_id' => $this->comentarioReporteId,
+            'user_id'    => auth()->id(),
+            'comentario' => $this->comentarioTexto,
+        ]);
+
+        // Notificar al hijo para refrescar su lista de comentarios
+        $this->dispatch('refrescarComentarios', id: $this->comentarioReporteId);
+
+        $this->cerrarModalComentario();
+        session()->flash('ok', 'Comentario agregado.');
+    }
+
+    public function abrirModalCerrar(int $id)
+    {
+        $this->cerrarReporteId = $id;
+        $this->showCerrarModal = true;
+    }
+
+    public function cerrarModalCerrar()
+    {
+        $this->showCerrarModal = false;
+        $this->cerrarReporteId = null;
+    }
+
+    public function confirmarCierre()
+    {
+        $reporte = \App\Models\Reporte::findOrFail($this->cerrarReporteId);
+
+        // si ya está cerrado, no hagas doble cierre
+        if ($reporte->estado_id !== 3) {
+            $reporte->estado_id = 3;         // Cerrado
+            $reporte->closed_at = now();
+            $reporte->save();
+        }
+
+        // refresca la card que corresponde
+        $this->dispatch('refrescarComentarios', id: $reporte->id);
+
+        $this->cerrarModalCerrar();
+        session()->flash('ok', 'Reporte cerrado correctamente.');
+    }
+
+
+    public function abrirModalCancelar(int $id)
+    {
+        $this->cancelarReporteId = $id;
+        $this->showCancelarModal = true;
+    }
+
+    public function cerrarModalCancelar()
+    {
+        $this->showCancelarModal = false;
+        $this->cancelarReporteId = null;
+    }
+
+    public function confirmarCancelar()
+    {
+        $reporte = \App\Models\Reporte::findOrFail($this->cancelarReporteId);
+
+        if ($reporte->estado_id !== 4) { // 4 = Cancelado
+            $reporte->estado_id = 4;
+            $reporte->save();
+        }
+
+        // refrescar la card del hijo
+        $this->dispatch('refrescarComentarios', id: $reporte->id);
+
+        $this->cerrarModalCancelar();
+        session()->flash('ok', 'Reporte cancelado correctamente.');
+    }
+
     public function render()
     {
         $departamentos = DepartamentoCongreso::orderBy('name')->get();
@@ -82,9 +281,37 @@ class Reportes extends Component
         $tecnicos = User::orderBy('name')->get();
 
         $reportes = Reporte::with(['categoria', 'tecnico', 'comentarios.user'])
+            ->whereHas('estado', fn($q) => $q->where('name', '!=', 'Cerrado'))
+            ->whereHas('estado', fn($q) => $q->where('name', '!=', 'Cancelado'))
             ->latest()
             ->paginate(10);
 
         return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos'));
+    }
+
+    public function messages()
+    {
+        return [
+            'nuevoReporte.departamento_id.required'      => 'El área del Congreso es obligatoria.',
+            'nuevoReporte.departamento_id.exists'        => 'El área seleccionada no es válida.',
+
+            'nuevoReporte.solicitante.required'          => 'El campo solicitante es obligatorio.',
+            'nuevoReporte.solicitante.max'               => 'El solicitante no puede tener más de 255 caracteres.',
+
+            'nuevoReporte.descripcion.required'          => 'La descripción es obligatoria.',
+            'nuevoReporte.descripcion.min'               => 'La descripción debe tener al menos 3 caracteres.',
+
+            'nuevoReporte.area_informatica_id.required'  => 'El área de informática es obligatoria.',
+            'nuevoReporte.area_informatica_id.exists'    => 'El área de informática seleccionada no es válida.',
+
+            'nuevoReporte.categoria_id.required'         => 'La categoría es obligatoria.',
+            'nuevoReporte.categoria_id.exists'           => 'La categoría seleccionada no es válida.',
+
+            'nuevoReporte.tecnico_id.required'           => 'El técnico es obligatorio.',
+            'nuevoReporte.tecnico_id.exists'             => 'El técnico seleccionado no es válido.',
+
+            'nuevoReporte.numero_copias.integer'         => 'El número de copias debe ser un número entero.',
+            'nuevoReporte.numero_copias.min'             => 'El número de copias debe ser al menos 1.',
+        ];
     }
 }

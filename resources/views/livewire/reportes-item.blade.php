@@ -1,16 +1,22 @@
-<div class="bg-white shadow rounded-lg overflow-hidden border border-gray-200 mb-4">
+<div class="bg-white shadow rounded-lg overflow-hidden border border-gray-300 mb-4">
     {{-- Header --}}
     <div class="px-4 py-3 bg-slate-100 flex flex-col justify-between items-start">
         <h3 class="font-semibold text-gray-800 text-sm">{{ $reporte->categoria->name }}</h3>
-        <span class="text-xs text-gray-500">Capturó: {{ $reporte->capturista->name }}</span>
-        <span class="text-xs text-gray-500">Asignación {{ $reporte->tiempo_transcurrido }} - {{ $reporte->tecnico->name }}</span>
+        {{-- Capturó y Asignación en una sola línea --}}
+        <div class="flex justify-between w-full text-xs text-gray-500">
+            <span>Capt: <strong>{{ $reporte->capturista->name }}</strong></span>
+            <span>Asig: <strong>{{ $reporte->tecnico->name }} - {{ $reporte->tiempo_transcurrido }}</strong></span>
+            <span>Est: <strong>{{ $reporte->estado->name }}</strong></span>
+        </div>
     </div>
 
     {{-- Body --}}
     <div class="px-4 py-4 ">
         <p class="font-serif text-gray-800 text-2xl">{{ $reporte->descripcion }}</p>
     </div>
-
+    <div class="px-4 py-1 bg-slate-100 flex flex-col justify-between items-start">
+        <span class="text-xs text-gray-500">Solicitó: <strong>{{ $reporte->solicitante }}</strong></span>
+    </div>
     @if ($reporte->comentarios->count() > 0)
         {{-- Comentarios --}}
         <div class="px-4 py-3 bg-white border-t">
@@ -50,25 +56,25 @@
     <div class="px-0 bg-gray-50 border-t flex divide-x text-sm text-gray-600">
         <button wire:click="atender"
             class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            {{-- <x-heroicon-o-check class="w-5 h-5" /> --}}
+            <i class="fa-solid fa-check text-green-600"></i>
             <span>Atendido</span>
         </button>
 
         <button wire:click="cerrar"
             class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            {{-- <x-heroicon-o-lock-closed class="w-5 h-5" /> --}}
+            <i class="fa-solid fa-lock text-blue-600"></i>
             <span>Cerrado</span>
         </button>
 
         <button wire:click="cancelar"
             class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            {{-- <x-heroicon-o-x-circle class="w-5 h-5" /> --}}
+            <i class="fa-solid fa-xmark text-red-600"></i>
             <span>Cancelar</span>
         </button>
 
         <button wire:click="comentar"
             class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            {{-- <x-heroicon-o-chat-bubble-left-ellipsis class="w-5 h-5" /> --}}
+            <i class="fa-regular fa-comment-dots text-gray-600"></i>
             <span>Comentar</span>
         </button>
     </div>
