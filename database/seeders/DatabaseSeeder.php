@@ -26,8 +26,9 @@ class DatabaseSeeder extends Seeder
             CategoriasSeeder::class,
             DepartamentosCongresoSeeder::class,
             EstadosSeeder::class,
-            ReportesSeeder::class,
+            // ReportesSeeder::class,
             // ComentariosSeeder::class,
+            ReportesFactorySeeder::class,
 
             // Otros seeders pueden ser llamados aquí
         ]);

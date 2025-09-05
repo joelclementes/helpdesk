@@ -283,7 +283,7 @@ class Reportes extends Component
 
         // El scope `abiertos` se utiliza para filtrar los reportes que no están cerrados ni cancelados.
         // está establecido en el modelo Reporte.php
-        $reportes = Reporte::with(['categoria', 'tecnico', 'comentarios.user'])
+        $reportes = Reporte::with(['categoria', 'tecnico','estado', 'comentarios.user'])
             ->abiertos()
             ->latest()
             ->paginate(5);

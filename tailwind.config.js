@@ -32,6 +32,18 @@ export default {
             }
         },
     },
+    safelist: [
+        'bg-green-100',
+        'bg-green-200',
+        'bg-green-300',
+        'bg-vino-100',
+        'bg-vino-200',
+        'bg-vino-300',
+        'bg-slate-100',
+        'bg-slate-200',
+        'bg-slate-300',
+        'bg-amber-100',
+    ],
 
     plugins: [forms, typography],
 };

@@ -1,11 +1,10 @@
 <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-300 mb-4">
-    @if($reporte->estado->name == 'Atendido')
-        <div class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 absolute top-2 right-2 rounded-full">
-            Atendido
-        </div>
-    @endif
     {{-- Header --}}
-    <div class="px-4 py-3 bg-slate-100 flex flex-col justify-between items-start">
+    @php
+    // dd($reporte->color_header);
+    @endphp
+    <div class="px-4 py-3 {{$reporte->color_header}} flex flex-col justify-between items-start">
+    {{-- <div class="px-4 py-3 bg-slate-100 flex flex-col justify-between items-start"> --}}
         <h3 class="font-semibold text-gray-800 text-sm">{{ $reporte->categoria->name }}</h3>
         {{-- Capturó y Asignación en una sola línea --}}
         <div class="flex justify-between w-full text-xs text-gray-500">

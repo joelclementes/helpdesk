@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Reporte extends Model
 {
@@ -93,5 +95,20 @@ class Reporte extends Model
     public function scopeAbiertos($q)
     {
         return $q->whereNotIn('estado_id', [3, 4]); // ajusta IDs
+    }
+
+    public function getColorHeaderAttribute(): string
+    {
+        $name = Str::of($this->estado->name ?? '')->trim()->lower();
+        
+        if ($name == 'atendido') {
+            return $this->created_at->lt(now()->subDays(3)) ? 'bg-green-200' : 'bg-green-100';
+        }
+
+        if ($name == 'pendiente') {
+            return $this->created_at->lt(now()->subDays(3)) ? 'bg-vino-100' : 'bg-slate-100';
+        }
+
+        return 'bg-slate-100';
     }
 }

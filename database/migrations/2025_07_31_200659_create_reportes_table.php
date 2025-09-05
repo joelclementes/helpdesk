@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('departamento_congreso_id')->unsigned();
             $table->string('solicitante');
-            $table->string('descripcion');
+            $table->text('descripcion');
             $table->bigInteger('area_informatica_id')->unsigned();
             $table->bigInteger('categoria_id')->unsigned();
             $table->bigInteger('capturo_user_id')->unsigned();
