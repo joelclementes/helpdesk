@@ -174,12 +174,12 @@
         <x-slot name="content">
             <div class="space-y-4">
                 <p class="text-sm text-gray-600">
-                    Selecciona la categoría y el técnico que atenderá el reporte.
+                    Reasigna categoría y/o técnico para el reporte.
                 </p>
 
                 {{-- Categoría --}}
                 <div>
-                    <x-label value="Categoría" />
+                    <x-label value="Reasignar categoría" />
                     <select wire:model.defer="atendidoCategoriaId"
                         class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
                         <option value="">Selecciona una categoría</option>
@@ -192,7 +192,7 @@
 
                 {{-- Técnico --}}
                 <div>
-                    <x-label value="Técnico asignado" />
+                    <x-label value="Reasignar técnico" />
                     <select wire:model.defer="atendidoTecnicoId"
                         class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
                         <option value="">Selecciona un técnico</option>
@@ -216,42 +216,6 @@
         </x-slot>
     </x-dialog-modal>
 
-    {{-- MODAL: Atendido --}}
-    {{-- <x-dialog-modal wire:model="showAtendidoModal" wire:key="atendido-modal" wire:ignore.self>
-        <x-slot name="title">
-            Marcar reporte como Atendido
-        </x-slot>
-
-        <x-slot name="content">
-            <div class="space-y-4">
-                <p class="text-sm text-gray-600">
-                    Selecciona la categoría actualizada para este reporte.
-                </p>
-
-                <div>
-                    <x-label value="Categoría" />
-                    <select wire:model.defer="atendidoCategoriaId"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                        <option value="">Selecciona una categoría</option>
-                        @foreach ($categorias as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                    <x-input-error for="atendidoCategoriaId" class="mt-1" />
-                </div>
-            </div>
-        </x-slot>
-
-        <x-slot name="footer">
-            <x-secondary-button wire:click="cerrarModalAtendido" class="me-2">
-                Cancelar
-            </x-secondary-button>
-
-            <x-button wire:click="guardarAtendido" class="bg-vino-700 hover:bg-vino-800">
-                Guardar
-            </x-button>
-        </x-slot>
-    </x-dialog-modal> --}}
 
     {{-- MODAL: Confirmar cierre --}}
     <x-dialog-modal wire:model="showCerrarModal" wire:key="cerrar-modal" wire:ignore.self>

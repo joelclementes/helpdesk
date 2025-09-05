@@ -11,8 +11,14 @@ class Reporte extends Model
     protected $table = 'reportes';
 
     protected $fillable = [
-        'solicitante', 'descripcion', 'categoria_id', 'estado_id',
-        'departamento_congreso_id', 'capturo_user_id', 'area_informatica_id', 'tecnico_user_id',
+        'solicitante',
+        'descripcion',
+        'categoria_id',
+        'estado_id',
+        'departamento_congreso_id',
+        'capturo_user_id',
+        'area_informatica_id',
+        'tecnico_user_id',
         'closed_at'
     ];
 
@@ -82,5 +88,10 @@ class Reporte extends Model
         } else {
             return $months . 'ms'; // meses
         }
+    }
+
+    public function scopeAbiertos($q)
+    {
+        return $q->whereNotIn('estado_id', [3, 4]); // ajusta IDs
     }
 }

@@ -280,11 +280,14 @@ class Reportes extends Component
         $categorias = Categoria::orderBy('name')->get();
         $tecnicos = User::orderBy('name')->get();
 
+
+        // El scope `abiertos` se utiliza para filtrar los reportes que no están cerrados ni cancelados.
+        // está establecido en el modelo Reporte.php
         $reportes = Reporte::with(['categoria', 'tecnico', 'comentarios.user'])
-            ->whereHas('estado', fn($q) => $q->where('name', '!=', 'Cerrado'))
-            ->whereHas('estado', fn($q) => $q->where('name', '!=', 'Cancelado'))
+            ->abiertos()
             ->latest()
-            ->paginate(10);
+            ->paginate(5);
+
 
         return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos'));
     }

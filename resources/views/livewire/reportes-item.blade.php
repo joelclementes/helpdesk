@@ -1,4 +1,9 @@
 <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-300 mb-4">
+    @if($reporte->estado->name == 'Atendido')
+        <div class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 absolute top-2 right-2 rounded-full">
+            Atendido
+        </div>
+    @endif
     {{-- Header --}}
     <div class="px-4 py-3 bg-slate-100 flex flex-col justify-between items-start">
         <h3 class="font-semibold text-gray-800 text-sm">{{ $reporte->categoria->name }}</h3>
@@ -60,15 +65,17 @@
             <span>Atendido</span>
         </button>
 
-        <button wire:click="cerrar"
-            class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            <i class="fa-solid fa-lock text-blue-600"></i>
-            <span>Cerrado</span>
-        </button>
+        @if ($reporte->estado->name == 'Atendido')
+            <button wire:click="cerrar"
+                class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
+                <i class="fa-solid fa-folder-closed text-vino-600"></i>
+                <span>Cerrado</span>
+            </button>
+        @endif
 
         <button wire:click="cancelar"
             class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            <i class="fa-solid fa-xmark text-red-600"></i>
+            <i class="fa-solid fa-circle-xmark text-red-600"></i>
             <span>Cancelar</span>
         </button>
 
