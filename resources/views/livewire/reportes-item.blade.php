@@ -1,21 +1,27 @@
 <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-300 mb-4">
     {{-- Header --}}
-    @php
-    // dd($reporte->color_header);
-    @endphp
-    <div class="px-4 py-3 {{$reporte->color_header}} flex flex-col justify-between items-start">
-    {{-- <div class="px-4 py-3 bg-slate-100 flex flex-col justify-between items-start"> --}}
+    <div class="px-4 py-1 {{ $reporte->color_header }} flex flex-col justify-between items-start">
         <h3 class="font-semibold text-gray-800 text-sm">{{ $reporte->categoria->name }}</h3>
-        {{-- Capturó y Asignación en una sola línea --}}
+
+        @if ($reporte->evento_nombre)
+            <div class="flex justify-between w-full text-xs text-gray-500">
+                <span>Evento: <strong>{{ $reporte->evento_nombre }}</strong></span>
+            </div>
+        @endif
+
         <div class="flex justify-between w-full text-xs text-gray-500">
             <span>Capt: <strong>{{ $reporte->capturista->name }}</strong></span>
-            <span>Asig: <strong>{{ $reporte->tecnico->name }} - {{ $reporte->tiempo_transcurrido }}</strong></span>
+            <span>Fecha: <strong>{{ $reporte->created_at->format('d/m/Y') }} -
+                    {{ $reporte->tiempo_transcurrido }}</strong></span>
             <span>Est: <strong>{{ $reporte->estado->name }}</strong></span>
+        </div>
+        <div class="flex justify-between w-full text-xs text-gray-500">
+            <span>Téc: <strong>{{ $reporte->tecnico->name }} </strong></span>
         </div>
     </div>
 
     {{-- Body --}}
-    <div class="px-4 py-4 ">
+    <div class="px-4 py-2 ">
         <p class="font-serif text-gray-800 text-2xl">{{ $reporte->descripcion }}</p>
     </div>
     <div class="px-4 py-1 bg-slate-100 flex flex-col justify-between items-start">
@@ -53,8 +59,6 @@
             </ul>
         </div>
     @endif
-
-
 
     {{-- Footer --}}
     <div class="px-0 bg-gray-50 border-t flex divide-x text-sm text-gray-600">

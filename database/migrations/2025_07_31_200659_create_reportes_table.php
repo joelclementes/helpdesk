@@ -27,6 +27,7 @@ return new class extends Migration
             $table->foreign('departamento_congreso_id')->references('id')->on('departamento_congreso')->onDelete('cascade');
             $table->foreign('area_informatica_id')->references('id')->on('area_informatica')->onDelete('cascade');
             $table->foreign('estado_id')->references('id')->on('estados')->onDelete('cascade');
+            $table->foreignId('evento_id')->nullable()->constrained('eventos')->nullOnDelete();
         });
     }
 

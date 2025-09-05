@@ -60,6 +60,19 @@
                     <x-input-error for="nuevoReporte.solicitante" class="mt-1" />
                 </div>
 
+                {{-- Evento (opcional) --}}
+                <div>
+                    <x-label value="Evento (opcional)" />
+                    <select wire:model.defer="nuevoReporte.evento_id"
+                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                        <option value="">Sin evento</option>
+                        @foreach ($eventos as $ev)
+                            <option value="{{ $ev->id }}">{{ $ev->nombre }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error for="nuevoReporte.evento_id" class="mt-1" />
+                </div>
+
                 {{-- Descripción --}}
                 <div>
                     <x-label value="Descripción" />
@@ -260,7 +273,16 @@
                     ID del reporte: #{{ $cancelarReporteId }}
                 </p>
             @endif
+            {{-- Campo para comentario --}}
+            <div class="mt-4">
+                <x-label for="cancelarComentario" value="Motivo de la cancelación" />
+                <textarea id="cancelarComentario" wire:model.defer="cancelarComentario"
+                    class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm" rows="3"
+                    placeholder="Escribe el motivo de la cancelación..."></textarea>
+                <x-input-error for="cancelarComentario" class="mt-1" />
+            </div>
         </x-slot>
+
 
         <x-slot name="footer">
             <x-secondary-button wire:click="cerrarModalCancelar" class="me-2">

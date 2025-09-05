@@ -40,6 +40,7 @@ class ReporteFactory extends Factory
             'capturo_user_id' => $this->faker->numberBetween(2, 3), // Basado en UsuariosSeeder
             'area_informatica_id' => $this->faker->numberBetween(1, 5), // Basado en AreasInformaticaSeeder
             'tecnico_user_id' => $this->faker->numberBetween(4, 23), // Técnico asignado
+            'evento_id' => $this->faker->numberBetween(1, 6), // Evento asignado
             'closed_at' => $closedAt,
             'created_at' => $createdAt,
             'updated_at' => $this->faker->dateTimeBetween($createdAt, 'now'),

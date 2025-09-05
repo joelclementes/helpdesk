@@ -21,7 +21,8 @@ class Reporte extends Model
         'capturo_user_id',
         'area_informatica_id',
         'tecnico_user_id',
-        'closed_at'
+        'closed_at',
+        'evento_id',
     ];
 
     public function categoria()
@@ -32,6 +33,11 @@ class Reporte extends Model
     public function estado()
     {
         return $this->belongsTo(Estado::class, 'estado_id');
+    }
+
+    public function evento()
+    {
+        return $this->belongsTo(Evento::class, 'evento_id');
     }
 
     public function departamento()
@@ -92,6 +98,11 @@ class Reporte extends Model
         }
     }
 
+    public function getEventoNombreAttribute(): string
+    {
+        return $this->evento?->nombre ?? '';
+    }
+
     public function scopeAbiertos($q)
     {
         return $q->whereNotIn('estado_id', [3, 4]); // ajusta IDs
@@ -100,7 +111,7 @@ class Reporte extends Model
     public function getColorHeaderAttribute(): string
     {
         $name = Str::of($this->estado->name ?? '')->trim()->lower();
-        
+
         if ($name == 'atendido') {
             return $this->created_at->lt(now()->subDays(3)) ? 'bg-green-200' : 'bg-green-100';
         }

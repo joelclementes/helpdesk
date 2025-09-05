@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Evento;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -28,7 +29,8 @@ class DatabaseSeeder extends Seeder
             EstadosSeeder::class,
             // ReportesSeeder::class,
             // ComentariosSeeder::class,
-            ReportesFactorySeeder::class,
+            EventosSeeder::class,
+            // ReportesFactorySeeder::class,
 
             // Otros seeders pueden ser llamados aquí
         ]);

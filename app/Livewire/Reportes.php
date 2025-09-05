@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\{Reporte, Comentario, DepartamentoCongreso, AreasInformatica, Categoria, User};
+use App\Models\{Reporte, Comentario, DepartamentoCongreso, AreasInformatica, Categoria, User, Evento};
 
 use Livewire\Attributes\On;
 
@@ -36,6 +36,7 @@ class Reportes extends Component
     // Modal Cancelar
     public bool $showCancelarModal = false;
     public ?int $cancelarReporteId = null;
+    public string $cancelarComentario = '';
 
     // Formulario
     public array $nuevoReporte = [
@@ -46,6 +47,7 @@ class Reportes extends Component
         'categoria_id'  => '',
         'tecnico_id'    => '',
         'numero_copias'  => '',
+        'evento_id'  => '',
     ];
 
     public function rules()
@@ -58,6 +60,7 @@ class Reportes extends Component
             'nuevoReporte.categoria_id'         => 'required|exists:categorias,id',
             'nuevoReporte.tecnico_id'           => 'required|exists:users,id',
             'nuevoReporte.numero_copias'        => 'nullable|integer|min:1',
+            'nuevoReporte.evento_id'            => 'nullable|exists:eventos,id',
         ];
     }
 
@@ -67,7 +70,7 @@ class Reportes extends Component
     public function abrirModalAtendido(int $id)
     {
         $reporte = Reporte::findOrFail($id);
-        $reporte = \App\Models\Reporte::findOrFail($id);
+        $reporte = Reporte::findOrFail($id);
 
         $this->atendidoReporteId   = $id;
         $this->atendidoCategoriaId = $reporte->categoria_id;     // preselecciona la actual
@@ -107,7 +110,7 @@ class Reportes extends Component
             'atendidoTecnicoId.exists'     => 'El técnico seleccionado no es válido.',
         ]);
 
-        $reporte = \App\Models\Reporte::findOrFail($this->atendidoReporteId);
+        $reporte = Reporte::findOrFail($this->atendidoReporteId);
 
         $reporte->estado_id       = 2; // Atendido
         $reporte->categoria_id    = $this->atendidoCategoriaId;
@@ -119,26 +122,7 @@ class Reportes extends Component
 
         $this->cerrarModalAtendido();
         session()->flash('ok', 'Reporte marcado como Atendido. Categoría y técnico actualizados.');
-
-        // $this->validate([
-        //     'atendidoCategoriaId' => 'required|exists:categorias,id',
-        // ], [
-        //     'atendidoCategoriaId.required' => 'Debes seleccionar una categoría.',
-        //     'atendidoCategoriaId.exists'   => 'La categoría seleccionada no es válida.',
-        // ]);
-
-        // $reporte = Reporte::findOrFail($this->atendidoReporteId);
-        // $reporte->estado_id = 2; // Atendido
-        // $reporte->categoria_id = $this->atendidoCategoriaId;
-        // $reporte->save();
-
-        // // refrescar el hijo
-        // $this->dispatch('refrescarComentarios', id: $reporte->id);
-
-        // $this->cerrarModalAtendido();
-        // session()->flash('ok', 'Reporte marcado como Atendido y categoría actualizada.');
     }
-
 
     public function abrirModalCrear()
     {
@@ -167,6 +151,7 @@ class Reportes extends Component
             'capturo_user_id'          => auth()->id(),
             'estado_id'                => 1,
             'numero_copias'            => $this->nuevoReporte['numero_copias'] ?: null,
+            'evento_id'                => $this->nuevoReporte['evento_id'] ?: null,
         ]);
 
         $this->reset('nuevoReporte');
@@ -228,7 +213,7 @@ class Reportes extends Component
 
     public function confirmarCierre()
     {
-        $reporte = \App\Models\Reporte::findOrFail($this->cerrarReporteId);
+        $reporte = Reporte::findOrFail($this->cerrarReporteId);
 
         // si ya está cerrado, no hagas doble cierre
         if ($reporte->estado_id !== 3) {
@@ -259,12 +244,19 @@ class Reportes extends Component
 
     public function confirmarCancelar()
     {
-        $reporte = \App\Models\Reporte::findOrFail($this->cancelarReporteId);
+        $reporte = Reporte::findOrFail($this->cancelarReporteId);
 
         if ($reporte->estado_id !== 4) { // 4 = Cancelado
             $reporte->estado_id = 4;
             $reporte->save();
         }
+
+        // Guardar comentario ligado al reporte
+        Comentario::create([
+            'reporte_id' => $reporte->id,
+            'user_id'    => auth()->id(),
+            'comentario' => '[Cancelación] ' . $this->cancelarComentario,
+        ]);
 
         // refrescar la card del hijo
         $this->dispatch('refrescarComentarios', id: $reporte->id);
@@ -279,17 +271,18 @@ class Reportes extends Component
         $areasInformatica = AreasInformatica::orderBy('name')->get();
         $categorias = Categoria::orderBy('name')->get();
         $tecnicos = User::orderBy('name')->get();
+        $eventos = Evento::orderBy('fecha', 'desc')->activos()->get();
 
 
         // El scope `abiertos` se utiliza para filtrar los reportes que no están cerrados ni cancelados.
         // está establecido en el modelo Reporte.php
-        $reportes = Reporte::with(['categoria', 'tecnico','estado', 'comentarios.user'])
+        $reportes = Reporte::with(['categoria', 'tecnico', 'estado', 'comentarios.user'])
             ->abiertos()
             ->latest()
             ->paginate(5);
 
 
-        return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos'));
+        return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos', 'eventos'));
     }
 
     public function messages()
