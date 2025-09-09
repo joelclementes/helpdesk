@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\{Reporte, Comentario, DepartamentoCongreso, AreasInformatica, Categoria, User, Evento};
+use Illuminate\Support\Facades\DB;
 
 use Livewire\Attributes\On;
 
@@ -19,10 +20,13 @@ class Reportes extends Component
 
 
     // Modal Atendido
-    public bool $showAtendidoModal = false;
     public ?int $atendidoReporteId = null;
     public ?int $atendidoCategoriaId = null;
+
+    public bool $showAtendidoModal = false;
     public ?int $atendidoTecnicoId = null;
+
+    public array $atendidoTecnicoIds = [];
 
     // --- estado del modal Cerrar ---
     public bool $showCerrarModal = false;
@@ -69,24 +73,17 @@ class Reportes extends Component
 
     public function abrirModalAtendido(int $id)
     {
-        $reporte = Reporte::findOrFail($id);
-        $reporte = Reporte::findOrFail($id);
+        // $reporte = Reporte::findOrFail($id);
+        $reporte = Reporte::with('tecnicos')->findOrFail($id);
 
         $this->atendidoReporteId   = $id;
         $this->atendidoCategoriaId = $reporte->categoria_id;     // preselecciona la actual
         $this->atendidoTecnicoId   = $reporte->tecnico_user_id;  // preselecciona el actual
 
+        $this->atendidoTecnicoIds = $reporte->tecnicos->pluck('id')->toArray();
+
         $this->resetValidation();
         $this->showAtendidoModal = true;
-
-
-        // $this->atendidoReporteId = $id;
-
-        // // carga la categoría actual del reporte
-        // $this->atendidoCategoriaId = Reporte::find($id)?->categoria_id;
-
-        // $this->resetValidation();
-        // $this->showAtendidoModal = true;
     }
 
     public function cerrarModalAtendido()
@@ -102,26 +99,35 @@ class Reportes extends Component
 
         $this->validate([
             'atendidoCategoriaId' => 'required|exists:categorias,id',
-            'atendidoTecnicoId'   => 'required|exists:users,id',
+            'atendidoTecnicoIds'  => 'required|array|min:1',
+            'atendidoTecnicoIds.*' => 'exists:users,id',
         ], [
-            'atendidoCategoriaId.required' => 'Debes seleccionar una categoría.',
-            'atendidoCategoriaId.exists'   => 'La categoría seleccionada no es válida.',
-            'atendidoTecnicoId.required'   => 'Debes seleccionar un técnico.',
-            'atendidoTecnicoId.exists'     => 'El técnico seleccionado no es válido.',
+            'atendidoTecnicoIds.required'  => 'Debes seleccionar al menos un técnico.',
+            'atendidoTecnicoIds.min'       => 'Debes seleccionar al menos un técnico.',
+            'atendidoTecnicoIds.*.exists'  => 'Uno de los técnicos seleccionados no es válido.',
         ]);
 
         $reporte = Reporte::findOrFail($this->atendidoReporteId);
 
-        $reporte->estado_id       = 2; // Atendido
-        $reporte->categoria_id    = $this->atendidoCategoriaId;
-        $reporte->tecnico_user_id = $this->atendidoTecnicoId;
+        // Estado + categoría
+        $reporte->estado_id    = 2; // Atendido
+        $reporte->categoria_id = $this->atendidoCategoriaId;
+
+        // (opcional) setear técnico principal al primero del checklist, si hay alguno
+        $reporte->tecnico_user_id = !empty($this->atendidoTecnicoIds)
+            ? $this->atendidoTecnicoIds[0]
+            : $reporte->tecnico_user_id; // o null si quieres limpiarlo
+
         $reporte->save();
+
+        // Sincronizar pivote con los técnicos seleccionados
+        $reporte->tecnicos()->sync($this->atendidoTecnicoIds ?? []);
 
         // refrescar la card del hijo
         $this->dispatch('refrescarComentarios', id: $reporte->id);
 
         $this->cerrarModalAtendido();
-        session()->flash('ok', 'Reporte marcado como Atendido. Categoría y técnico actualizados.');
+        session()->flash('ok', 'Reporte marcado como Atendido. Categoría y técnicos actualizados.');
     }
 
     public function abrirModalCrear()
@@ -137,22 +143,35 @@ class Reportes extends Component
 
     public function guardarNuevoReporte()
     {
+
         $this->validate();
 
-        // dd($this->nuevoReporte);
+        DB::transaction(function () {
+            // 1) Crear el reporte
+            $reporte = Reporte::create([
+                'departamento_congreso_id' => $this->nuevoReporte['departamento_id'],
+                'solicitante'              => $this->nuevoReporte['solicitante'],
+                'descripcion'              => $this->nuevoReporte['descripcion'],
+                'area_informatica_id'      => $this->nuevoReporte['area_informatica_id'],
+                'categoria_id'             => $this->nuevoReporte['categoria_id'],
+                'tecnico_user_id'          => $this->nuevoReporte['tecnico_id'] ?: null, // principal
+                'capturo_user_id'          => auth()->id(),
+                'estado_id'                => 1,
+                'numero_copias'            => $this->nuevoReporte['numero_copias'] ?: null,
+                'evento_id'                => $this->nuevoReporte['evento_id'] ?: null,
+            ]);
 
-        Reporte::create([
-            'departamento_congreso_id' => $this->nuevoReporte['departamento_id'],
-            'solicitante'              => $this->nuevoReporte['solicitante'],
-            'descripcion'              => $this->nuevoReporte['descripcion'],
-            'area_informatica_id'      => $this->nuevoReporte['area_informatica_id'],
-            'categoria_id'             => $this->nuevoReporte['categoria_id'],
-            'tecnico_user_id'          => $this->nuevoReporte['tecnico_id'] ?: null,
-            'capturo_user_id'          => auth()->id(),
-            'estado_id'                => 1,
-            'numero_copias'            => $this->nuevoReporte['numero_copias'] ?: null,
-            'evento_id'                => $this->nuevoReporte['evento_id'] ?: null,
-        ]);
+            // 2) Guardar también en la pivote (si viene técnico)
+            if (!empty($this->nuevoReporte['tecnico_id'])) {
+                // evita duplicados si existe unique(reporte_id,user_id)
+                $reporte->tecnicos()->syncWithoutDetaching([
+                    $this->nuevoReporte['tecnico_id'],
+                ]);
+            }
+
+            // (Opcional) si capturas múltiples técnicos en el form:
+            // $reporte->tecnicos()->sync($this->nuevoReporte['tecnico_ids'] ?? []);
+        });
 
         $this->reset('nuevoReporte');
         $this->cerrarModalCrear();
@@ -271,7 +290,7 @@ class Reportes extends Component
         $areasInformatica = AreasInformatica::orderBy('name')->get();
         $categorias = Categoria::orderBy('name')->get();
         $tecnicos = User::orderBy('name')->get();
-        $eventos = Evento::orderBy('fecha', 'desc')->activos()->get();
+        $eventos = Evento::orderBy('date', 'desc')->activos()->get();
 
 
         // El scope `abiertos` se utiliza para filtrar los reportes que no están cerrados ni cancelados.

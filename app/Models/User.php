@@ -58,4 +58,11 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function reportes()
+    {
+        return $this->belongsToMany(Reporte::class, 'reporte_user')
+            ->withPivot(['rol', 'asignado_at'])
+            ->withTimestamps();
+    }
 }

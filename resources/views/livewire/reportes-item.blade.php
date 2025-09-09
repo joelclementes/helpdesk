@@ -16,7 +16,8 @@
             <span>Est: <strong>{{ $reporte->estado->name }}</strong></span>
         </div>
         <div class="flex justify-between w-full text-xs text-gray-500">
-            <span>Téc: <strong>{{ $reporte->tecnico->name }} </strong></span>
+            {{-- <span>Téc: <strong>{{ $reporte->tecnico->name }} </strong></span> --}}
+            <span>Téc: <strong>{{ $reporte->tecnicos->pluck('name')->join(', ') ?: 'Sin técnico' }} </strong></span>
         </div>
     </div>
 

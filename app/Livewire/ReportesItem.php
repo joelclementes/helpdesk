@@ -35,7 +35,7 @@ class ReportesItem extends Component
     public function refrescarComentarios(int $id)
     {
         if ($id === $this->reporte->id) {
-            $this->reporte->refresh()->load(['categoria', 'estado','tecnico','comentarios.user']);
+            $this->reporte->refresh()->load(['categoria', 'estado','tecnico','tecnicos','comentarios.user']);
         }
     }
 

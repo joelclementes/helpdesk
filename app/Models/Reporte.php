@@ -60,7 +60,16 @@ class Reporte extends Model
         return $this->belongsTo(User::class, 'tecnico_user_id');
     }
 
-    // 🔗 Comentarios del reporte (últimos primero)
+    public function tecnicos()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'reporte_user')
+            ->withTimestamps();
+        // return $this->belongsToMany(User::class, 'reporte_user')
+        //     ->withPivot(['rol', 'asignado_at'])
+        //     ->withTimestamps();
+    }
+
+    // Comentarios del reporte (últimos primero)
     public function comentarios()
     {
         return $this->hasMany(Comentario::class, 'reporte_id')->latest();

@@ -70,7 +70,7 @@
                             class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
                             <option value="">Sin evento</option>
                             @foreach ($eventos as $ev)
-                                <option value="{{ $ev->id }}">{{ $ev->nombre }}</option>
+                                <option value="{{ $ev->id }}">{{ $ev->name }}</option>
                             @endforeach
                         </select>
                         <x-input-error for="nuevoReporte.evento_id" class="mt-1" />
@@ -188,6 +188,7 @@
 
 
     {{-- MODAL: Atendido --}}
+
     <x-dialog-modal wire:model="showAtendidoModal" wire:key="atendido-modal" wire:ignore.self>
         <x-slot name="title">
             Marcar reporte como Atendido
@@ -196,7 +197,7 @@
         <x-slot name="content">
             <div class="space-y-4">
                 <p class="text-sm text-gray-600">
-                    Reasigna categoría y/o técnico para el reporte.
+                    Reasigna categoría y/o técnicos para el reporte.
                 </p>
 
                 {{-- Categoría --}}
@@ -212,17 +213,21 @@
                     <x-input-error for="atendidoCategoriaId" class="mt-1" />
                 </div>
 
-                {{-- Técnico --}}
+                {{-- Técnicos (checklist múltiple) --}}
                 <div>
-                    <x-label value="Reasignar técnico" />
-                    <select wire:model.defer="atendidoTecnicoId"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                        <option value="">Selecciona un técnico</option>
+                    <x-label value="Técnicos asignados (puede seleccionar varios)" />
+                    <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                         @foreach ($tecnicos as $tec)
-                            <option value="{{ $tec->id }}">{{ $tec->name }}</option>
+                            <label
+                                class="flex items-center gap-2 px-3 py-2 rounded-md border border-vino-200 hover:bg-vino-50">
+                                <input type="checkbox" value="{{ $tec->id }}"
+                                    wire:model.defer="atendidoTecnicoIds"
+                                    class="rounded border-vino-300 text-vino-600 focus:ring-vino-500">
+                                <span class="text-sm text-gray-800">{{ $tec->name }}</span>
+                            </label>
                         @endforeach
-                    </select>
-                    <x-input-error for="atendidoTecnicoId" class="mt-1" />
+                    </div>
+                    <x-input-error for="atendidoTecnicoIds" class="mt-1" />
                 </div>
             </div>
         </x-slot>
@@ -237,6 +242,7 @@
             </x-button>
         </x-slot>
     </x-dialog-modal>
+
 
 
     {{-- MODAL: Confirmar cierre --}}
