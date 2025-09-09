@@ -32,7 +32,6 @@
     </div>
 
     {{-- MODAL: Crear reporte --}}
-    {{-- MODAL: Crear reporte --}}
     <x-dialog-modal wire:model="showCreateModal" wire:key="create-reporte-modal" wire:ignore.self maxWidth="2xl">
         <x-slot name="title">
             Nuevo Reporte

@@ -281,6 +281,13 @@ class Reportes extends Component
             ->latest()
             ->paginate(5);
 
+        // Mostrar solo los reportes asignados al usuario logueado
+        // $reportes = Reporte::with(['categoria', 'tecnico', 'estado', 'comentarios.user'])
+        //     ->where('tecnico_user_id', auth()->id())   // 👈 filtra por usuario logueado
+        //     ->abiertos()
+        //     ->latest()
+        //     ->paginate(5);
+
 
         return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos', 'eventos'));
     }
