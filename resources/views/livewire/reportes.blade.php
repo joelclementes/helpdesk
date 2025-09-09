@@ -32,102 +32,111 @@
     </div>
 
     {{-- MODAL: Crear reporte --}}
-    <x-dialog-modal wire:model="showCreateModal" wire:key="create-reporte-modal" wire:ignore.self>
+    {{-- MODAL: Crear reporte --}}
+    <x-dialog-modal wire:model="showCreateModal" wire:key="create-reporte-modal" wire:ignore.self maxWidth="2xl">
         <x-slot name="title">
             Nuevo Reporte
         </x-slot>
 
         <x-slot name="content">
-            <div class="space-y-4">
-                {{-- Areas del Congreso --}}
-                <div>
-                    <x-label value="Área del Congreso" />
-                    <select wire:model.defer="nuevoReporte.departamento_id"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                        <option value="">Selecciona un área</option>
-                        @foreach ($departamentos as $dep)
-                            <option value="{{ $dep->id }}">{{ $dep->name }}</option>
-                        @endforeach
-                    </select>
-                    <x-input-error for="nuevoReporte.departamento_id" class="mt-1" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {{-- Columna 1 --}}
+                <div class="space-y-4">
+                    {{-- Área del Congreso --}}
+                    <div>
+                        <x-label value="Área del Congreso" />
+                        <select wire:model.defer="nuevoReporte.departamento_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                            <option value="">Selecciona un área</option>
+                            @foreach ($departamentos as $dep)
+                                <option value="{{ $dep->id }}">{{ $dep->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="nuevoReporte.departamento_id" class="mt-1" />
+                    </div>
+
+                    {{-- Solicitante --}}
+                    <div>
+                        <x-label value="Solicitante" />
+                        <x-input type="text" wire:model.defer="nuevoReporte.solicitante"
+                            class="border-vino-300 w-full mt-1" placeholder="Nombre del solicitante" />
+                        <x-input-error for="nuevoReporte.solicitante" class="mt-1" />
+                    </div>
+
+                    {{-- Evento (opcional) --}}
+                    <div>
+                        <x-label value="Evento (opcional)" />
+                        <select wire:model.defer="nuevoReporte.evento_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                            <option value="">Sin evento</option>
+                            @foreach ($eventos as $ev)
+                                <option value="{{ $ev->id }}">{{ $ev->nombre }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="nuevoReporte.evento_id" class="mt-1" />
+                    </div>
+
+                    {{-- Descripción --}}
+                    <div>
+                        <x-label value="Descripción" />
+                        <textarea wire:model.defer="nuevoReporte.descripcion"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm" rows="6"
+                            placeholder="Describe la solicitud..."></textarea>
+                        <x-input-error for="nuevoReporte.descripcion" class="mt-1" />
+                    </div>
                 </div>
 
-                {{-- Solicitante --}}
-                <div>
-                    <x-label value="Solicitante" />
-                    <x-input type="text" wire:model.defer="nuevoReporte.solicitante"
-                        class="border-vino-300 w-full mt-1" placeholder="Nombre del solicitante" />
-                    <x-input-error for="nuevoReporte.solicitante" class="mt-1" />
+                {{-- Columna 2 --}}
+                <div class="space-y-4">
+                    {{-- Área de Informática --}}
+                    <div>
+                        <x-label value="Área de Informática" />
+                        <select wire:model.defer="nuevoReporte.area_informatica_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                            <option value="">Selecciona un área</option>
+                            @foreach ($areasInformatica as $area)
+                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="nuevoReporte.area_informatica_id" class="mt-1" />
+                    </div>
+
+                    {{-- Categoría --}}
+                    <div>
+                        <x-label value="Categoría" />
+                        <select wire:model.defer="nuevoReporte.categoria_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                            <option value="">Selecciona una categoría</option>
+                            @foreach ($categorias as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="nuevoReporte.categoria_id" class="mt-1" />
+                    </div>
+
+                    {{-- Técnico asignado --}}
+                    <div>
+                        <x-label value="Técnico asignado" />
+                        <select wire:model.defer="nuevoReporte.tecnico_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                            <option value="">Selecciona un técnico</option>
+                            @foreach ($tecnicos as $tec)
+                                <option value="{{ $tec->id }}">{{ $tec->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="nuevoReporte.tecnico_id" class="mt-1" />
+                    </div>
+
+                    {{-- Número de copias/en su caso --}}
+                    <div>
+                        <x-label value="Número de copias/en su caso" />
+                        <x-input type="number" wire:model.defer="nuevoReporte.numero_copias"
+                            class="border-vino-300 w-full mt-1" placeholder="Número de copias" />
+                        <x-input-error for="nuevoReporte.numero_copias" class="mt-1" />
+                    </div>
                 </div>
 
-                {{-- Evento (opcional) --}}
-                <div>
-                    <x-label value="Evento (opcional)" />
-                    <select wire:model.defer="nuevoReporte.evento_id"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                        <option value="">Sin evento</option>
-                        @foreach ($eventos as $ev)
-                            <option value="{{ $ev->id }}">{{ $ev->nombre }}</option>
-                        @endforeach
-                    </select>
-                    <x-input-error for="nuevoReporte.evento_id" class="mt-1" />
-                </div>
-
-                {{-- Descripción --}}
-                <div>
-                    <x-label value="Descripción" />
-                    <textarea wire:model.defer="nuevoReporte.descripcion"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm" rows="4"
-                        placeholder="Describe la solicitud..."></textarea>
-                    <x-input-error for="nuevoReporte.descripcion" class="mt-1" />
-                </div>
-
-                {{-- Área de Informática --}}
-                <div>
-                    <x-label value="Área de Informática" />
-                    <select wire:model.defer="nuevoReporte.area_informatica_id"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                        <option value="">Selecciona un área</option>
-                        @foreach ($areasInformatica as $area)
-                            <option value="{{ $area->id }}">{{ $area->name }}</option>
-                        @endforeach
-                    </select>
-                    <x-input-error for="nuevoReporte.area_informatica_id" class="mt-1" />
-                </div>
-
-                {{-- Categoría --}}
-                <div>
-                    <x-label value="Categoría" />
-                    <select wire:model.defer="nuevoReporte.categoria_id"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                        <option value="">Selecciona una categoría</option>
-                        @foreach ($categorias as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                    <x-input-error for="nuevoReporte.categoria_id" class="mt-1" />
-                </div>
-
-                {{-- Técnico asignado --}}
-                <div>
-                    <x-label value="Técnico asignado" />
-                    <select wire:model.defer="nuevoReporte.tecnico_id"
-                        class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
-                        <option value="">Selecciona un técnico</option>
-                        @foreach ($tecnicos as $tec)
-                            <option value="{{ $tec->id }}">{{ $tec->name }}</option>
-                        @endforeach
-                    </select>
-                    <x-input-error for="nuevoReporte.tecnico_id" class="mt-1" />
-                </div>
-
-                {{-- Número de copias/en su caso --}}
-                <div>
-                    <x-label value="Número de copias/en su caso" />
-                    <x-input type="number" wire:model.defer="nuevoReporte.numero_copias"
-                        class="border-vino-300 w-full mt-1" placeholder="Número de copias" />
-                    <x-input-error for="nuevoReporte.numero_copias" class="mt-1" />
-                </div>
             </div>
         </x-slot>
 
@@ -141,6 +150,7 @@
             </x-button>
         </x-slot>
     </x-dialog-modal>
+
 
     {{-- MODAL: Comentar --}}
     <x-dialog-modal wire:model="showComentarioModal" wire:key="comentario-modal" wire:ignore.self>
