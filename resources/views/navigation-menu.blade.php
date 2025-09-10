@@ -21,6 +21,9 @@
                     <x-nav-link href="{{ route('estadisticas') }}" :active="request()->routeIs('estadisticas')">
                         Estadísticas
                     </x-nav-link>
+                    <x-nav-link href="{{ route('consultas') }}" :active="request()->routeIs('consultas')">
+                        Consultas
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -153,6 +156,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('estadisticas') }}" :active="request()->routeIs('estadisticas')">
                 Estadísticas
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('consultas') }}" :active="request()->routeIs('consultas')">
+                Consultas
             </x-responsive-nav-link>
         </div>
 

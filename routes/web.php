@@ -35,4 +35,7 @@ Route::middleware([
     Route::get('/estadisticas', function () {
         return view('estadisticas');
     })->name('estadisticas');
+    Route::get('/consultas', function () {
+        return view('consultas');
+    })->name('consultas');
 });
