@@ -42,7 +42,45 @@
         </div>
 
         {{-- DataTable --}}
-        <div class="bg-white shadow rounded-lg border border-gray-200 overflow-x-auto">
+
+        <div class="bg-white rounded-lg border border-gray-200 overflow-x-auto p-4" >
+            <table id="tablaAtendidos" class="min-w-full text-sm">
+                <thead class="bg-gray-50 text-gray-600">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Fecha</th>
+                        <th class="px-4 py-2 text-left">Departamento</th>
+                        <th class="px-4 py-2 text-left">Área de informática</th>
+                        <th class="px-4 py-2 text-left">Categoría</th>
+                        <th class="px-4 py-2 text-left">Técnico(s)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    @forelse($reportes as $r)
+                        <tr>
+                            <td class="px-4 py-2 text-gray-800 text-xs font-medium">
+                                {{ $r->created_at?->format('d/m/Y') }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->departamento->name ?? '—' }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->area->name ?? '—' }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->categoria->name ?? '—' }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->tecnicos->pluck('name')->join(', ') ?: $r->tecnico->name ?? '—' }}
+                            </td>
+                        </tr>
+                    @empty
+                        {{-- Si no hay filas, DataTables mostrará "No data available" --}}
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{-- <div class="bg-white shadow rounded-lg border border-gray-200 overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead class="bg-gray-50 text-gray-600">
                     <tr>
@@ -91,12 +129,13 @@
             </table>
 
             {{-- Paginación --}}
+        {{--
             @if ($aplicar && $reportes instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="px-4 py-3">
                     {{ $reportes->links() }}
                 </div>
             @endif
-        </div>
+        </div> --}}
     </div>
 
 </div>

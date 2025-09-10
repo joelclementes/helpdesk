@@ -10,6 +10,12 @@ class Evento extends Model
     use HasFactory;
     protected $table = 'eventos';
 
+    protected $fillable = [
+        'name',
+        'date',
+        'activo',
+    ];
+
     public function reportes(){
         return $this->hasMany(Reporte::class, 'evento_id');
     }
