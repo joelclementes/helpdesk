@@ -27,7 +27,7 @@ class Reporte extends Model
 
     public function area()
     {
-        return $this->belongsTo(AreasInformatica::class, 'area_id');
+        return $this->belongsTo(AreasInformatica::class, 'area_informatica_id');
     }
 
     public function capturista()
@@ -47,7 +47,7 @@ class Reporte extends Model
 
     public function departamento()
     {
-        return $this->belongsTo(DepartamentoCongreso::class, 'departamento_id');
+        return $this->belongsTo(DepartamentoCongreso::class, 'departamento_congreso_id');
     }
 
     public function estado()

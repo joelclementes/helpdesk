@@ -21,7 +21,7 @@ class ReportesFactorySeeder extends Seeder
 
         // 50 reportes atendidos (25%)
         Reporte::factory()
-            ->count(4)
+            ->count(20)
             ->atendido()
             ->create();
 
