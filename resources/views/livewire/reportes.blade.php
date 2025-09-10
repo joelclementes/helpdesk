@@ -1,4 +1,4 @@
-<div class="max-w-2xl mx-auto px-4 space-y-6">
+<div class="max-w-4xl mx-auto px-4 space-y-6">
 
     {{-- Feedback --}}
     @if (session('ok'))

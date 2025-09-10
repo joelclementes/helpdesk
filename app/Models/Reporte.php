@@ -25,9 +25,29 @@ class Reporte extends Model
         'evento_id',
     ];
 
+    public function area()
+    {
+        return $this->belongsTo(AreasInformatica::class, 'area_id');
+    }
+
+    public function capturista()
+    {
+        return $this->belongsTo(User::class, 'capturo_user_id');
+    }
+
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class, 'reporte_id')->latest();
+    }
+
+    public function departamento()
+    {
+        return $this->belongsTo(DepartamentoCongreso::class, 'departamento_id');
     }
 
     public function estado()
@@ -38,21 +58,6 @@ class Reporte extends Model
     public function evento()
     {
         return $this->belongsTo(Evento::class, 'evento_id');
-    }
-
-    public function departamento()
-    {
-        return $this->belongsTo(DepartamentoCongreso::class, 'departamento_id');
-    }
-
-    public function capturista()
-    {
-        return $this->belongsTo(User::class, 'capturo_user_id');
-    }
-
-    public function area()
-    {
-        return $this->belongsTo(AreasInformatica::class, 'area_id');
     }
 
     public function tecnico()
@@ -67,12 +72,6 @@ class Reporte extends Model
         // return $this->belongsToMany(User::class, 'reporte_user')
         //     ->withPivot(['rol', 'asignado_at'])
         //     ->withTimestamps();
-    }
-
-    // Comentarios del reporte (últimos primero)
-    public function comentarios()
-    {
-        return $this->hasMany(Comentario::class, 'reporte_id')->latest();
     }
 
     // (Opcional) atajo: cantidad de comentarios
