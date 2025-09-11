@@ -98,13 +98,9 @@ class ReportesAtendidos extends Component
 
     public function render()
     {
-        // $reportes = $this->aplicar
-        //     ? $this->baseQuery()->paginate(10)
-        //     : collect();
-
         $reportes = $this->aplicar
-            ? $this->baseQuery()->get()
-            : collect();
+            ? $this->baseQuery()->paginate(10)
+            : collect(); // vacío hasta que se pulse Aceptar
 
         return view('livewire.reportes-atendidos', compact('reportes'));
     }

@@ -108,7 +108,7 @@ class Reporte extends Model
 
     public function getEventoNombreAttribute(): string
     {
-        return $this->evento?->name ?? '';
+        return $this->evento?->nombre ?? '';
     }
 
     public function scopeAbiertos($q)
