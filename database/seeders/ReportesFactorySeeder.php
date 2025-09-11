@@ -13,51 +13,38 @@ class ReportesFactorySeeder extends Seeder
      */
     public function run(): void
     {
-        // 60 reportes pendientes (30%)
+
+        $totPendientes = 8;
+        $totAtendidos  = 15;
+        $totCerrados   = 15;
+        $totCancelados = 2;
+
         Reporte::factory()
-            ->count(2)
+            ->count($totPendientes)
             ->pendiente()
             ->create();
 
-        // 50 reportes atendidos (25%)
         Reporte::factory()
-            ->count(20)
+            ->count($totAtendidos)
             ->atendido()
             ->create();
 
-        // 70 reportes cerrados (35%)
         Reporte::factory()
-            ->count(150)
+            ->count($totCerrados)
             ->cerrado()
             ->create();
 
-        // 20 reportes cancelados (10%)
         Reporte::factory()
-            ->count(2)
+            ->count($totCancelados)
             ->cancelado()
             ->create();
 
-        // Crear algunos reportes específicos para pruebas
-        
-        // 10 reportes recientes pendientes
-        Reporte::factory()
-            ->count(5)
-            ->reciente()
-            ->pendiente()
-            ->create();
 
-        // 5 reportes antiguos cerrados
-        Reporte::factory()
-            ->count(200)
-            ->antiguo()
-            ->cerrado()
-            ->create();
-
-        $this->command->info('✅ Se crearon 200 reportes exitosamente con el factory');
+        $this->command->info('✅ Se crearon '. $totPendientes + $totAtendidos + $totCerrados + $totCancelados .' reportes exitosamente con el factory');
         $this->command->info('📊 Distribución:');
-        $this->command->info('   - 70 Pendientes (60 + 10 recientes)');
-        $this->command->info('   - 50 Atendidos');
-        $this->command->info('   - 75 Cerrados (70 + 5 antiguos)');
-        $this->command->info('   - 20 Cancelados');
+        $this->command->info('   - ' . $totPendientes . ' Pendientes');
+        $this->command->info('   - ' . $totAtendidos . ' Atendidos');
+        $this->command->info('   - ' . $totCerrados . ' Cerrados');
+        $this->command->info('   - ' . $totCancelados . ' Cancelados');
     }
 }

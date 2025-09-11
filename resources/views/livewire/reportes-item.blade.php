@@ -1,4 +1,4 @@
-<div class="bg-white shadow rounded-lg overflow-hidden border border-gray-300 mb-4">
+<div class="bg-white shadow rounded-lg overflow-hidden border border-gray-300 mb-2">
     {{-- Header --}}
     <div class="px-4 py-1 {{ $reporte->color_header }} flex flex-col justify-between items-start">
         <h3 class="font-semibold text-gray-800 text-sm">{{ $reporte->categoria->name }}</h3>
@@ -76,7 +76,7 @@
                 <button wire:click="cerrar"
                     class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
                     <i class="fa-solid fa-folder-closed text-vino-600"></i>
-                    <span>Cerrado</span>
+                    <span>Cerrar</span>
                 </button>
             @endif
 

@@ -17,7 +17,8 @@ class Reportes extends Component
     // Modal
     public bool $showCreateModal = false;
 
-
+    public int $totalPendientes = 0;
+    public int $totalAtendidos = 0;
 
     // Modal Atendido
     public ?int $atendidoReporteId = null;
@@ -300,13 +301,8 @@ class Reportes extends Component
             ->latest()
             ->paginate(5);
 
-        // Mostrar solo los reportes asignados al usuario logueado
-        // $reportes = Reporte::with(['categoria', 'tecnico', 'estado', 'comentarios.user'])
-        //     ->where('tecnico_user_id', auth()->id())   // 👈 filtra por usuario logueado
-        //     ->abiertos()
-        //     ->latest()
-        //     ->paginate(5);
-
+        $this->totalPendientes = Reporte::whereHas('estado', fn($q) => $q->where('name', 'Pendiente'))->count();
+        $this->totalAtendidos  = Reporte::whereHas('estado', fn($q) => $q->where('name', 'Atendido'))->count();
 
         return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos', 'eventos'));
     }

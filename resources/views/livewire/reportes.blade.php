@@ -22,10 +22,30 @@
         </div>
     </div>
 
+    {{-- Totales --}}
+    <div class="flex justify-between items-center mb-1">
+        <div>
+            Pendientes:
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                {{ $totalPendientes }}
+            </span>
+        </div>
+        <div>
+            Atendidos:
+            <span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                {{ $totalAtendidos }}
+            </span>
+        </div>
+    </div>
+
+
     {{-- Listado de cards existentes --}}
-    @foreach ($reportes as $reporte)
-        <livewire:reportes-item :reporte="$reporte" :key="'reportes-item-' . $reporte->id" />
-    @endforeach
+    <div class="space-y-2">
+        @foreach ($reportes as $reporte)
+            <livewire:reportes-item :reporte="$reporte" :key="'reportes-item-' . $reporte->id" />
+        @endforeach
+    </div>
 
     <div>
         {{ $reportes->links() }}
