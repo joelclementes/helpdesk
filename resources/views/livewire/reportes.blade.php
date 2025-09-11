@@ -18,30 +18,27 @@
 
         {{-- (opcional) filtros o resumen --}}
         <div class="px-4 py-4 text-sm text-gray-600">
-            Crea un nuevo reporte.
+            {{-- Totales --}}
+            <div class="flex gap-4 items-center mb-1">
+                <div>
+                    <span class="mr-2 font-bold">Totales </span>Pendientes:
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        {{ $totalPendientes }}
+                    </span>
+                </div>
+                <div>
+                    Atendidos (Pendientes de cerrar):
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {{ $totalAtendidos }}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
-
-    {{-- Totales --}}
-    <div class="flex justify-between items-center mb-1">
-        <div>
-            Pendientes:
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                {{ $totalPendientes }}
-            </span>
-        </div>
-        <div>
-            Atendidos:
-            <span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                {{ $totalAtendidos }}
-            </span>
-        </div>
-    </div>
-
 
     {{-- Listado de cards existentes --}}
-    <div class="space-y-2">
+    <div class="space-y-3">
         @foreach ($reportes as $reporte)
             <livewire:reportes-item :reporte="$reporte" :key="'reportes-item-' . $reporte->id" />
         @endforeach
