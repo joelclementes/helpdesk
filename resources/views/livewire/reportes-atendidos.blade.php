@@ -41,62 +41,62 @@
             </div>
         </div>
 
-        {{-- DataTable --}}
-        <div class="bg-white shadow rounded-lg border border-gray-200 overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="bg-gray-50 text-gray-600">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Fecha</th>
-                        <th class="px-4 py-2 text-left">Departamento</th>
-                        <th class="px-4 py-2 text-left">Área de informática</th>
-                        <th class="px-4 py-2 text-left">Categoría</th>
-                        <th class="px-4 py-2 text-left">Técnico(s)</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y">
-                    @if ($aplicar && $reportes instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                        @forelse($reportes as $r)
-                            <tr>
-                                <td class="px-4 py-2 text-gray-800 text-xs font-medium">
-                                    {{ $r->created_at?->format('d/m/Y') }}
-                                </td>
-                                <td class="px-4 py-2 text-gray-700 text-xs">
-                                    {{ $r->departamento->name ?? '—' }}
-                                </td>
-                                <td class="px-4 py-2 text-gray-700 text-xs">
-                                    {{ $r->area->name ?? '—' }}
-                                </td>
-                                <td class="px-4 py-2 text-gray-700 text-xs">
-                                    {{ $r->categoria->name ?? '—' }}
-                                </td>
-                                <td class="px-4 py-2 text-gray-700 text-xs">
-                                    {{ $r->tecnicos->pluck('name')->join(', ') ?: $r->tecnico->name ?? '—' }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-4 py-6 text-center text-gray-500">
-                                    Sin resultados.
-                                </td>
-                            </tr>
-                        @endforelse
-                    @else
+    </div>
+    
+    {{-- DataTable --}}
+    <div class="bg-white shadow rounded-lg border border-gray-200 overflow-x-auto">
+        <table class="min-w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="px-4 py-2 text-left">Fecha</th>
+                    <th class="px-4 py-2 text-left">Departamento</th>
+                    <th class="px-4 py-2 text-left">Área de informática</th>
+                    <th class="px-4 py-2 text-left">Categoría</th>
+                    <th class="px-4 py-2 text-left">Técnico(s)</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y">
+                @if ($aplicar && $reportes instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    @forelse($reportes as $r)
                         <tr>
-                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">
-                                Selecciona un rango y pulsa <strong>Aceptar</strong>.
+                            <td class="px-4 py-2 text-gray-800 text-xs font-medium">
+                                {{ $r->created_at?->format('d/m/Y') }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->departamento->name ?? '—' }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->area->name ?? '—' }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->categoria->name ?? '—' }}
+                            </td>
+                            <td class="px-4 py-2 text-gray-700 text-xs">
+                                {{ $r->tecnicos->pluck('name')->join(', ') ?: $r->tecnico->name ?? '—' }}
                             </td>
                         </tr>
-                    @endif
-                </tbody>
-            </table>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">
+                                Sin resultados.
+                            </td>
+                        </tr>
+                    @endforelse
+                @else
+                    <tr>
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-500">
+                            Selecciona un rango y pulsa <strong>Aceptar</strong>.
+                        </td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
 
-            {{-- Paginación --}}
-            @if ($aplicar && $reportes instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                <div class="px-4 py-3">
-                    {{ $reportes->links() }}
-                </div>
-            @endif
-        </div>
+        {{-- Paginación --}}
+        @if ($aplicar && $reportes instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="px-4 py-3">
+                {{ $reportes->links() }}
+            </div>
+        @endif
     </div>
-
 </div>
