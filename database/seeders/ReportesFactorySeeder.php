@@ -27,7 +27,7 @@ class ReportesFactorySeeder extends Seeder
 
         // 70 reportes cerrados (35%)
         Reporte::factory()
-            ->count(3)
+            ->count(150)
             ->cerrado()
             ->create();
 

@@ -42,9 +42,9 @@
         </div>
 
     </div>
-    
+
     {{-- DataTable --}}
-    <div class="bg-white shadow rounded-lg border border-gray-200 overflow-x-auto">
+    {{-- <div class="bg-white shadow rounded-lg border border-gray-200 overflow-x-auto">
         <table class="min-w-full text-sm">
             <thead class="bg-gray-50 text-gray-600">
                 <tr>
@@ -92,11 +92,36 @@
             </tbody>
         </table>
 
-        {{-- Paginación --}}
+        {{-- Paginación --}}  {{--
         @if ($aplicar && $reportes instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="px-4 py-3">
+                {{ $reportes->links() }} 
+            </div>
+        @endif
+    </div> --}}
+
+    {{-- Grid de cards --}}
+    <div class="bg-white shadow rounded-lg border border-gray-200 p-4">
+        @if ($aplicar && $reportes instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="grid gap-4 sm:grid-cols-2 ">
+                @forelse ($reportes as $r)
+                    {{-- Reusar la card existente y ocultar acciones --}}
+                    <livewire:reportes-item :reporte="$r" :mostrar-footer="false" :mostrar-estado="false" :key="'att-' . $r->id" />
+                @empty
+                    <div class="col-span-full text-center text-gray-500 py-6">
+                        Sin resultados.
+                    </div>
+                @endforelse
+            </div>
+
             <div class="px-4 py-3">
                 {{ $reportes->links() }}
             </div>
+        @else
+            <div class="text-center text-gray-500 py-6">
+                Selecciona un rango y pulsa <strong>Aceptar</strong>.
+            </div>
         @endif
     </div>
+
 </div>

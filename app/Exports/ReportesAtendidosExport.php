@@ -17,10 +17,10 @@ class ReportesAtendidosExport implements FromQuery, WithHeadings, WithMapping
     public function query()
     {
         return Reporte::with(['estado','categoria','tecnico','departamento','area','tecnicos'])
-            ->whereHas('estado', fn($q) => $q->where('name','Atendido'))
+            ->whereHas('estado', fn($q) => $q->where('name','Cerrado'))
             ->when($this->fechainicial, fn($q) => $q->whereDate('created_at','>=',$this->fechainicial))
             ->when($this->fechafinal,   fn($q) => $q->whereDate('created_at','<=',$this->fechafinal))
-            ->orderByDesc('created_at');
+            ->orderBy('created_at');
     }
 
     public function headings(): array

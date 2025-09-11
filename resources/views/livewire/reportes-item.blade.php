@@ -13,7 +13,9 @@
             <span>Capt: <strong>{{ $reporte->capturista->name }}</strong></span>
             <span>Fecha: <strong>{{ $reporte->created_at->format('d/m/Y') }} -
                     {{ $reporte->tiempo_transcurrido }}</strong></span>
-            <span>Est: <strong>{{ $reporte->estado->name }}</strong></span>
+            @if ($mostrarEstado)
+                <span>Est: <strong>{{ $reporte->estado->name }}</strong></span>
+            @endif
         </div>
         <div class="flex justify-between w-full text-xs text-gray-500">
             {{-- <span>Téc: <strong>{{ $reporte->tecnico->name }} </strong></span> --}}
@@ -23,7 +25,7 @@
 
     {{-- Body --}}
     <div class="px-4 py-2 ">
-        <p class="font-serif text-gray-800 text-2xl">{{ $reporte->descripcion }}</p>
+        <p class="font-serif text-gray-800 text-1xl">{{ $reporte->descripcion }}</p>
     </div>
     <div class="px-4 py-1 bg-slate-100 flex flex-col justify-between items-start">
         <span class="text-xs text-gray-500">Solicitó: <strong>{{ $reporte->solicitante }}</strong></span>
@@ -62,31 +64,33 @@
     @endif
 
     {{-- Footer --}}
-    <div class="px-0 bg-gray-50 border-t flex divide-x text-sm text-gray-600">
-        <button wire:click="atender"
-            class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            <i class="fa-solid fa-check text-green-600"></i>
-            <span>Atendido</span>
-        </button>
-
-        @if ($reporte->estado->name == 'Atendido')
-            <button wire:click="cerrar"
+    @if ($mostrarFooter)
+        <div class="px-0 bg-gray-50 border-t flex divide-x text-sm text-gray-600">
+            <button wire:click="atender"
                 class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-                <i class="fa-solid fa-folder-closed text-vino-600"></i>
-                <span>Cerrado</span>
+                <i class="fa-solid fa-check text-green-600"></i>
+                <span>Atendido</span>
             </button>
-        @endif
 
-        <button wire:click="cancelar"
-            class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            <i class="fa-solid fa-circle-xmark text-red-600"></i>
-            <span>Cancelar</span>
-        </button>
+            @if ($reporte->estado->name == 'Atendido')
+                <button wire:click="cerrar"
+                    class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-folder-closed text-vino-600"></i>
+                    <span>Cerrado</span>
+                </button>
+            @endif
 
-        <button wire:click="comentar"
-            class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-            <i class="fa-regular fa-comment-dots text-gray-600"></i>
-            <span>Comentar</span>
-        </button>
-    </div>
+            <button wire:click="cancelar"
+                class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
+                <i class="fa-solid fa-circle-xmark text-red-600"></i>
+                <span>Cancelar</span>
+            </button>
+
+            <button wire:click="comentar"
+                class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
+                <i class="fa-regular fa-comment-dots text-gray-600"></i>
+                <span>Comentar</span>
+            </button>
+        </div>
+    @endif
 </div>

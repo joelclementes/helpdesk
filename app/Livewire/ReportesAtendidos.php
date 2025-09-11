@@ -58,7 +58,7 @@ class ReportesAtendidos extends Component
             'area',
             'tecnicos'
         ])
-            ->whereHas('estado', fn($q) => $q->where('name', 'Atendido'))
+            ->whereHas('estado', fn($q) => $q->where('name', 'Cerrado'))
             ->when($this->fechainicial, fn($q) => $q->whereDate('created_at', '>=', $this->fechainicial))
             ->when($this->fechafinal,   fn($q) => $q->whereDate('created_at', '<=', $this->fechafinal))
             ->orderByDesc('created_at');
@@ -99,8 +99,8 @@ class ReportesAtendidos extends Component
     public function render()
     {
         $reportes = $this->aplicar
-            ? $this->baseQuery()->paginate(10)
-            : collect(); // vacío hasta que se pulse Aceptar
+            ? $this->baseQuery()->paginate(6) // 10 por página en grid
+            : collect();
 
         return view('livewire.reportes-atendidos', compact('reportes'));
     }

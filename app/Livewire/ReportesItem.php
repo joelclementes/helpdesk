@@ -9,6 +9,9 @@ class ReportesItem extends Component
 {
     public Reporte $reporte;
 
+    public bool $mostrarFooter = true;
+    public bool $mostrarEstado = true;
+
     public function atender()
     {
         $this->dispatch('abrirModalAtendido', id: $this->reporte->id);
