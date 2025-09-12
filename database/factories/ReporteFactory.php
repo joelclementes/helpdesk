@@ -12,7 +12,7 @@ class ReporteFactory extends Factory
 
     public function definition(): array
     {
-        $createdAt = $this->faker->dateTimeBetween('-10 days', 'now');
+        $createdAt = $this->faker->dateTimeBetween('-12 days', 'now');
         $estadoId  = $this->faker->numberBetween(1, 4); // 1-4 según EstadosSeeder
 
         $closedAt = null;
@@ -122,4 +122,26 @@ class ReporteFactory extends Factory
             ];
         });
     }
+
+    public function conDiasAtras(int $dias): static
+{
+    return $this->state(function (array $attributes) use ($dias) {
+        $createdAt = $this->faker->dateTimeBetween("-{$dias} days", 'now');
+
+        // Si el estado ya fue seteado a "Cerrado" (3) o "Cancelado" (4),
+        // respeta esa lógica de closed_at acorde al nuevo created_at
+        $estadoId = $attributes['estado_id'] ?? null;
+        $closedAt = null;
+
+        if ($estadoId === 3 || $estadoId === 4) {
+            $closedAt = $this->faker->dateTimeBetween($createdAt, 'now');
+        }
+
+        return [
+            'created_at' => $createdAt,
+            'updated_at' => $this->faker->dateTimeBetween($createdAt, 'now'),
+            'closed_at'  => $closedAt, // null si no aplica
+        ];
+    });
+}
 }
