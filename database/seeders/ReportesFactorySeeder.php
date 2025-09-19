@@ -16,7 +16,7 @@ class ReportesFactorySeeder extends Seeder
 
         $totPendientes = 5;
         $totAtendidos  = 5;
-        $totCerrados   = 20;
+        $totCerrados   = 40;
         $totCancelados = 0;
 
         Reporte::factory()

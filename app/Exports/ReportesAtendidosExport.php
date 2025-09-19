@@ -11,37 +11,41 @@ class ReportesAtendidosExport implements FromQuery, WithHeadings, WithMapping
 {
     public function __construct(
         protected ?string $fechainicial = null,
-        protected ?string $fechafinal = null
+        protected ?string $fechafinal = null,
+        public ?int $tecnicoId = null
     ) {}
 
     public function query()
     {
-        return Reporte::with(['estado','categoria','tecnico','departamento','area','tecnicos'])
-            ->whereHas('estado', fn($q) => $q->where('name','Cerrado'))
-            ->when($this->fechainicial, fn($q) => $q->whereDate('created_at','>=',$this->fechainicial))
-            ->when($this->fechafinal,   fn($q) => $q->whereDate('created_at','<=',$this->fechafinal))
-            ->orderBy('created_at');
+        return Reporte::with(['estado', 'categoria', 'tecnico', 'departamento', 'area', 'tecnicos'])
+            ->whereHas('estado', fn($q) => $q->where('name', 'Cerrado'))
+            ->when($this->fechainicial, fn($q) => $q->whereDate('created_at', '>=', $this->fechainicial))
+            ->when($this->fechafinal,   fn($q) => $q->whereDate('created_at', '<=', $this->fechafinal))
+            ->when($this->tecnicoId, function ($q, $id) {
+                $q->where(function ($qq) use ($id) {
+                    $qq->where('tecnico_user_id', $id)
+                        ->orWhereHas('tecnicos', fn($t) => $t->where('users.id', $id));
+                });
+            })
+            ->orderByDesc('created_at');
     }
 
     public function headings(): array
     {
-        return ['Fecha', 'Departamento', 'Área de informática', 'Categoría', 'Técnicos'];
+        return ['ID','Fecha','Estado','Departamento','Área','Categoría','Técnico principal','Descripción'];
     }
 
-    public function map($reporte): array
+      public function map($reporte): array
     {
-        // Técnicos: usar pivote (si no hay, caer al principal)
-        $tecnicos = $reporte->tecnicos?->pluck('name')->join(', ');
-        if (!$tecnicos) {
-            $tecnicos = $reporte->tecnico?->name ?? '';
-        }
-
         return [
-            optional($reporte->created_at)->format('d/m/Y'),
-            $reporte->departamento->name    ?? '',
-            $reporte->area->name ?? '',
-            $reporte->categoria->name       ?? '',
-            $tecnicos,
+            $reporte->id,
+            optional($reporte->created_at)->format('Y-m-d H:i'),
+            optional($reporte->estado)->name,
+            optional($reporte->departamento)->name,
+            optional($reporte->area)->name,
+            optional($reporte->categoria)->name,
+            optional($reporte->tecnico)->name,
+            $reporte->descripcion,
         ];
     }
 }

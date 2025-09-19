@@ -8,6 +8,7 @@ use App\Models\Reporte;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReportesAtendidosExport;
 use Carbon\Carbon;
+use App\Models\User;
 
 class ReportesAtendidos extends Component
 {
@@ -15,11 +16,13 @@ class ReportesAtendidos extends Component
 
     public ?string $fechainicial = null;
     public ?string $fechafinal   = null;
-    public bool $aplicar = false; // solo carga al pulsar Aceptar
+    public bool $aplicar = false;
+    public ?int $tecnicoId = null;
 
     protected $queryString = [
         'fechainicial' => ['except' => ''],
         'fechafinal'   => ['except' => ''],
+        'tecnicoId'    => ['except' => ''],
         'aplicar'      => ['except' => false],
         'page'         => ['except' => 1],
     ];
@@ -29,6 +32,7 @@ class ReportesAtendidos extends Component
         return [
             'fechainicial' => 'nullable|date',
             'fechafinal'   => 'nullable|date|after_or_equal:fechainicial',
+            'tecnicoId'    => 'nullable|exists:users,id',
         ];
     }
 
@@ -48,6 +52,12 @@ class ReportesAtendidos extends Component
         $this->resetPage();
     }
 
+    public function updatingTecnicoId()
+    {
+        $this->aplicar = true; 
+        $this->resetPage();
+    }
+
     protected function baseQuery()
     {
         return Reporte::with([
@@ -61,8 +71,15 @@ class ReportesAtendidos extends Component
             ->whereHas('estado', fn($q) => $q->where('name', 'Cerrado'))
             ->when($this->fechainicial, fn($q) => $q->whereDate('created_at', '>=', $this->fechainicial))
             ->when($this->fechafinal,   fn($q) => $q->whereDate('created_at', '<=', $this->fechafinal))
+            ->when($this->tecnicoId, function ($q, $id) {
+                $q->where(function ($qq) use ($id) {
+                    $qq->where('tecnico_user_id', $id)
+                        ->orWhereHas('tecnicos', fn($t) => $t->where('users.id', $id));
+                });
+            })
             ->orderByDesc('created_at');
     }
+
 
     public function exportarExcel()
     {
@@ -70,12 +87,11 @@ class ReportesAtendidos extends Component
         $this->validate();
 
         // nombre de archivo
-        // $file = 'reportes_atendidos_' . now()->format('Ymd_His') . '.xlsx';
-        $file = 'reportes_atendidos_' . $this->fechainicial . '_' . $this->fechafinal . '.xlsx';
+        $sufijoTec = $this->tecnicoId ? ('_tec' . $this->tecnicoId) : '';
+        $file = 'reportes_atendidos_' . $this->fechainicial . '_' . $this->fechafinal . $sufijoTec . '.xlsx';
 
-        // Livewire v3 permite retornar respuestas (descarga)
         return Excel::download(
-            new ReportesAtendidosExport($this->fechainicial, $this->fechafinal),
+            new ReportesAtendidosExport($this->fechainicial, $this->fechafinal, $this->tecnicoId), // <-- pasa técnico
             $file
         );
     }
@@ -102,6 +118,7 @@ class ReportesAtendidos extends Component
             ? $this->baseQuery()->paginate(6) // 10 por página en grid
             : collect();
 
-        return view('livewire.reportes-atendidos', compact('reportes'));
+        $tecnicos = User::orderBy('name')->get(['id', 'name']);
+        return view('livewire.reportes-atendidos', compact('reportes', 'tecnicos'));
     }
 }
