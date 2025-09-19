@@ -78,7 +78,6 @@ class Reportes extends Component
 
     public function abrirModalAtendido(int $id)
     {
-        // $reporte = Reporte::findOrFail($id);
         $reporte = Reporte::with('tecnicos')->findOrFail($id);
 
         $this->atendidoReporteId   = $id;
@@ -314,6 +313,7 @@ class Reportes extends Component
         // $categorias = Categoria::orderBy('name')->get();
         $tecnicos = User::orderBy('name')->get();
         $eventos = Evento::orderBy('date', 'desc')->activos()->get();
+        $todasCategorias   = Categoria::select('id','name')->orderBy('name')->get();
 
         // El scope `abiertos` se utiliza para filtrar los reportes que no están cerrados ni cancelados.
         // está establecido en el modelo Reporte.php
@@ -330,7 +330,8 @@ class Reportes extends Component
             'departamentos',
             'areasInformatica',
             'tecnicos',
-            'eventos'
+            'eventos',
+            'todasCategorias'
         ));
     }
 

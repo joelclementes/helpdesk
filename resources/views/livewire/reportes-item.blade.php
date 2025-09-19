@@ -29,6 +29,7 @@
     </div>
     <div class="px-4 py-1 bg-slate-100 flex flex-col justify-between items-start">
         <span class="text-xs text-gray-500">Solicitó: <strong>{{ $reporte->solicitante }}</strong></span>
+        <span class="text-xs text-gray-500">Depto: <strong>{{ $reporte->departamento->name }}</strong></span>
     </div>
     @if ($reporte->comentarios->count() > 0)
         {{-- Comentarios --}}
