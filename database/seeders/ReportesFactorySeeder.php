@@ -14,9 +14,9 @@ class ReportesFactorySeeder extends Seeder
     public function run(): void
     {
 
-        $totPendientes = 5;
-        $totAtendidos  = 5;
-        $totCerrados   = 200;
+        $totPendientes = 1;
+        $totAtendidos  = 1;
+        $totCerrados   = 1;
         $totCancelados = 0;
 
         Reporte::factory()
