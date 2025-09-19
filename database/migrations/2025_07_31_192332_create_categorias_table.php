@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->timestamps();
+            $table->foreignId('area_informatica_id')
+                ->nullable()
+                ->constrained('area_informatica')   // nombre de tu tabla de áreas
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
         });
     }
 

@@ -21,6 +21,8 @@ class Reporte extends Model
         'capturo_user_id',
         'area_informatica_id',
         'tecnico_user_id',
+        'numero_copias',
+        'numero_inventario',
         'closed_at',
         'evento_id',
     ];

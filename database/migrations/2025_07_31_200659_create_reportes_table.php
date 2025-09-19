@@ -21,6 +21,7 @@ return new class extends Migration
             $table->bigInteger('capturo_user_id')->unsigned();
             $table->bigInteger('tecnico_user_id')->nullable();
             $table->bigInteger('numero_copias')->nullable();
+            $table->string('numero_inventario')->nullable();
             $table->bigInteger('estado_id')->unsigned();
             $table->timestamps();
             $table->timestamp('closed_at')->nullable();

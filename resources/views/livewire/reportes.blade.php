@@ -22,7 +22,8 @@
             <div class="flex gap-4 items-center mb-1">
                 <div>
                     <span class="mr-2 font-bold">Totales </span>Pendientes:
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                         {{ $totalPendientes }}
                     </span>
                 </div>
@@ -49,7 +50,7 @@
     </div>
 
     {{-- MODAL: Crear reporte --}}
-    <x-dialog-modal wire:model="showCreateModal" wire:key="create-reporte-modal" wire:ignore.self maxWidth="2xl">
+    <x-dialog-modal wire:model="showCreateModal" wire:key="create-reporte-modal" maxWidth="2xl">
         <x-slot name="title">
             Nuevo Reporte
         </x-slot>
@@ -106,9 +107,37 @@
                 {{-- Columna 2 --}}
                 <div class="space-y-4">
                     {{-- Área de Informática --}}
-                    <div>
+                    {{-- <div>
                         <x-label value="Área de Informática" />
                         <select wire:model.defer="nuevoReporte.area_informatica_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                            <option value="">Selecciona un área</option>
+                            @foreach ($areasInformatica as $area)
+                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="nuevoReporte.area_informatica_id" class="mt-1" />
+                    </div> --}}
+
+                    {{-- Categoría --}}
+                    {{-- <div>
+                        <x-label value="Categoría" />
+                        <select wire:model.defer="nuevoReporte.categoria_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                            <option value="">Selecciona una categoría</option>
+                            @foreach ($categorias as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="nuevoReporte.categoria_id" class="mt-1" />
+                    </div> --}}
+
+
+
+                    {{-- Área de Informática --}}
+                    <div>
+                        <x-label value="Área de Informática" />
+                        <select wire:model.live="nuevoReporte.area_informatica_id"
                             class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
                             <option value="">Selecciona un área</option>
                             @foreach ($areasInformatica as $area)
@@ -121,10 +150,12 @@
                     {{-- Categoría --}}
                     <div>
                         <x-label value="Categoría" />
-                        <select wire:model.defer="nuevoReporte.categoria_id"
-                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
+                        <select wire:model="nuevoReporte.categoria_id"
+                            class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm"
+                            @disabled(!filled($nuevoReporte['area_informatica_id']))
+                            >
                             <option value="">Selecciona una categoría</option>
-                            @foreach ($categorias as $cat)
+                            @foreach ($categoriasFiltradas as $cat)
                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                             @endforeach
                         </select>
@@ -150,6 +181,14 @@
                         <x-input type="number" wire:model.defer="nuevoReporte.numero_copias"
                             class="border-vino-300 w-full mt-1" placeholder="Número de copias" />
                         <x-input-error for="nuevoReporte.numero_copias" class="mt-1" />
+                    </div>
+
+                    {{-- Número de inventario/en su caso --}}
+                    <div>
+                        <x-label value="Número de inventario/en su caso" />
+                        <x-input type="text" wire:model.defer="nuevoReporte.numero_inventario"
+                            class="border-vino-300 w-full mt-1" placeholder="Número de inventario" />
+                        <x-input-error for="nuevoReporte.numero_inventario" class="mt-1" />
                     </div>
                 </div>
 
@@ -223,7 +262,7 @@
                     <select wire:model.defer="atendidoCategoriaId"
                         class="w-full mt-1 rounded-md border-vino-300 focus:border-vino-500 focus:ring-vino-500 text-sm">
                         <option value="">Selecciona una categoría</option>
-                        @foreach ($categorias as $cat)
+                        @foreach ($categoriasFiltradas as $cat)
                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                         @endforeach
                     </select>
