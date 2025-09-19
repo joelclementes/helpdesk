@@ -68,7 +68,12 @@ class ResumenPorAreas extends Component
                 'reportes.id as reporte_id',
             ])
             ->whereNotNull('reportes.tecnico_user_id')
-            ->where('reportes.estado_id', 3) // solo Cerrado
+            ->whereExists(function ($qq) {
+                $qq->from('estados')
+                    ->whereColumn('estados.id', 'reportes.estado_id')
+                    ->where('estados.name', 'Cerrado');
+            })
+
             ->when($this->fechainicial, fn($q) => $q->whereDate('reportes.created_at', '>=', $this->fechainicial))
             ->when($this->fechafinal,   fn($q) => $q->whereDate('reportes.created_at', '<=', $this->fechafinal));
 
@@ -80,7 +85,12 @@ class ResumenPorAreas extends Component
                 'reporte_user.user_id as user_id',
                 'reportes.id as reporte_id',
             ])
-            ->where('reportes.estado_id', 3) // solo Cerrado
+            ->whereExists(function ($qq) {
+                $qq->from('estados')
+                    ->whereColumn('estados.id', 'reportes.estado_id')
+                    ->where('estados.name', 'Cerrado');
+            })
+
             ->when($this->fechainicial, fn($q) => $q->whereDate('reportes.created_at', '>=', $this->fechainicial))
             ->when($this->fechafinal,   fn($q) => $q->whereDate('reportes.created_at', '<=', $this->fechafinal));
 
