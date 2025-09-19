@@ -43,7 +43,7 @@
                 <div class="flex items-end">
                     <x-button wire:click="aceptar"
                         class="flex items-center justify-center bg-vino-700 hover:bg-vino-800 w-full h-[42px]">
-                        Aceptar
+                        Filtrar
                     </x-button>
                 </div>
     
