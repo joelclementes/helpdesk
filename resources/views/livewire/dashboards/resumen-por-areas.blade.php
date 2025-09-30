@@ -144,6 +144,11 @@
 @once
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+        <script>
+            Chart.register(ChartDataLabels);
+        </script>
+
         <script>
             window._pies = window._pies || {};
 
@@ -168,22 +173,36 @@
                     },
                     options: {
                         devicePixelRatio: Math.max(2, window.devicePixelRatio || 1),
-                        responsive: true,
+                        responsive: false,
                         maintainAspectRatio: false,
                         plugins: {
+                            datalabels: {
+                                color: '#111111',
+                                formatter: (value) => (value ?? 0).toLocaleString('es-MX'),
+                            },
                             legend: {
-                                position: 'right', // ← vertical
+                                position: 'bottom',
                                 labels: {
-                                    // Muestra "Categoría (n)"
-                                    generateLabels: function(chart) {
-                                        const orig = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                                        const data = chart.data.datasets[0]?.data || [];
-                                        return orig.map((item, i) => ({
-                                            ...item,
-                                            text: `${item.text} (${data[i] ?? 0})`
-                                        }));
-                                    }
-                                }
+                                    generateLabels(chart) {
+                                        const labels = chart.data?.labels ?? [];
+                                        const ds = chart.data?.datasets?.[0] ?? {};
+                                        const data = ds.data ?? [];
+                                        const bg = ds.backgroundColor;
+
+                                        return labels.map((label, i) => {
+                                            const color = Array.isArray(bg) ? bg[i] : (typeof bg ===
+                                                'string' ? bg : undefined);
+                                            return {
+                                                text: `${label ?? '—'} (${(data[i] ?? 0).toLocaleString('es-MX')})`,
+                                                fillStyle: color,
+                                                strokeStyle: color,
+                                                // mantiene la lógica de ocultar/mostrar segmentos
+                                                hidden: chart.getDatasetMeta(0).data?.[i]?.hidden ?? false,
+                                                index: i,
+                                            };
+                                        });
+                                    },
+                                },
                             },
                             tooltip: {
                                 callbacks: {
@@ -197,7 +216,7 @@
                                 }
                             },
                             title: {
-                                display: !!title,
+                                // display: !!title,
                                 text: title
                             }
                         }
@@ -254,8 +273,32 @@
                         animation: false,
                         devicePixelRatio: 1, // ya escalamos con el tamaño del canvas
                         plugins: {
+                            // legend: {
+                            //     position: 'right'
+                            // },
                             legend: {
-                                position: 'right'
+                                position: 'right',
+                                labels: {
+                                    generateLabels(chart) {
+                                        const labels = chart.data?.labels ?? [];
+                                        const ds = chart.data?.datasets?.[0] ?? {};
+                                        const data = ds.data ?? [];
+                                        const bg = ds.backgroundColor;
+
+                                        return labels.map((label, i) => {
+                                            const color = Array.isArray(bg) ? bg[i] : (typeof bg ===
+                                                'string' ? bg : undefined);
+                                            return {
+                                                text: `${label ?? '—'} (${(data[i] ?? 0).toLocaleString('es-MX')})`,
+                                                fillStyle: color,
+                                                strokeStyle: color,
+                                                // mantiene la lógica de ocultar/mostrar segmentos
+                                                hidden: chart.getDatasetMeta(0).data?.[i]?.hidden ?? false,
+                                                index: i,
+                                            };
+                                        });
+                                    },
+                                },
                             },
                             title: {
                                 display: !!title,
@@ -287,7 +330,6 @@
                 tmpChart.destroy();
                 tmp.width = tmp.height = 0;
             };
-
         </script>
     @endpush
 @endonce
