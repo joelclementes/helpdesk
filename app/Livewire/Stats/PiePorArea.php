@@ -27,15 +27,26 @@ class PiePorArea extends Component
 
     public function loadData(): void
     {
-        $rows = Reporte::query()
-            ->join('categorias', 'categorias.id', '=', 'reportes.categoria_id')
-            ->where('reportes.area_informatica_id', $this->areaId)
-            ->when($this->fechainicial, fn($q) => $q->whereDate('reportes.created_at', '>=', $this->fechainicial))
-            ->when($this->fechafinal,   fn($q) => $q->whereDate('reportes.created_at', '<=', $this->fechafinal))
-            ->groupBy('categorias.name')
-            ->orderBy('categorias.name')
-            ->select('categorias.name as categoria', DB::raw('COUNT(reportes.id) as total'))
-            ->get();
+        // $rows = Reporte::query()
+        //     ->join('categorias', 'categorias.id', '=', 'reportes.categoria_id')
+        //     ->where('reportes.area_informatica_id', $this->areaId)
+        //     ->when($this->fechainicial, fn($q) => $q->whereDate('reportes.created_at', '>=', $this->fechainicial))
+        //     ->when($this->fechafinal,   fn($q) => $q->whereDate('reportes.created_at', '<=', $this->fechafinal))
+        //     ->groupBy('categorias.name')
+        //     ->orderBy('categorias.name')
+        //     ->select('categorias.name as categoria', DB::raw('COUNT(reportes.id) as total'))
+        //     ->get();
+
+            $rows = Reporte::query()
+    ->join('categorias', 'categorias.id', '=', 'reportes.categoria_id')
+    ->where('reportes.area_informatica_id', $this->areaId)
+    ->where('reportes.estado_id', 3) // solo cerrados
+    ->when($this->fechainicial, fn($q) => $q->whereDate('reportes.created_at', '>=', $this->fechainicial))
+    ->when($this->fechafinal,   fn($q) => $q->whereDate('reportes.created_at', '<=', $this->fechafinal))
+    ->groupBy('categorias.name')
+    ->orderBy('categorias.name')
+    ->select('categorias.name as categoria', DB::raw('COUNT(reportes.id) as total'))
+    ->get();
 
         $this->labels = $rows->pluck('categoria')->toArray();
         $this->values = $rows->pluck('total')->toArray();
@@ -43,7 +54,13 @@ class PiePorArea extends Component
 
     public function render()
     {
+        // $this->loadData();
+        // return view('livewire.stats.pie-por-area');
         $this->loadData();
+
+        // Dispara al navegador; lo escucha el x-on de arriba
+        $this->dispatch('render-pie', id: $this->chartId, labels: $this->labels, values: $this->values, title: $this->title);
+
         return view('livewire.stats.pie-por-area');
     }
 }

@@ -143,9 +143,38 @@
 
 {{-- Componente auxiliar de tarjeta (opcional) --}}
 @once
-    @push('components')
-        @php
-            // Si no usas un <x-card>, puedes pegar este blade simple en resources/views/components/card.blade.php
-        @endphp
-    @endpush
+  @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      window._pies = window._pies || {};
+
+      window.renderPie = function(id, labels, values, title = '') {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const ctx = el.getContext('2d');
+
+        if (window._pies[id]) window._pies[id].destroy();
+
+        window._pies[id] = new Chart(ctx, {
+          type: 'pie',
+          data: { labels, datasets: [{ data: values }] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom' },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `${ctx.label}: ${ctx.parsed ?? 0}`
+                }
+              },
+              title: { display: !!title, text: title }
+            }
+          }
+        });
+      };
+    </script>
+  @endpush
 @endonce
+
+
