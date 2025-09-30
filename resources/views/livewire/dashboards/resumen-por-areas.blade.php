@@ -141,40 +141,153 @@
     </div>
 </div>
 
-{{-- Componente auxiliar de tarjeta (opcional) --}}
 @once
-  @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      window._pies = window._pies || {};
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            window._pies = window._pies || {};
 
-      window.renderPie = function(id, labels, values, title = '') {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const ctx = el.getContext('2d');
+            // Crea/actualiza el gráfico
+            window.renderPie = function(id, labels, values, title) {
+                const el = document.getElementById(id);
+                if (!el) return;
 
-        if (window._pies[id]) window._pies[id].destroy();
+                const ctx = el.getContext('2d');
 
-        window._pies[id] = new Chart(ctx, {
-          type: 'pie',
-          data: { labels, datasets: [{ data: values }] },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom' },
-              tooltip: {
-                callbacks: {
-                  label: (ctx) => `${ctx.label}: ${ctx.parsed ?? 0}`
+                if (window._pies[id]) {
+                    window._pies[id].destroy();
                 }
-              },
-              title: { display: !!title, text: title }
-            }
-          }
-        });
-      };
-    </script>
-  @endpush
+
+                window._pies[id] = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values
+                        }]
+                    },
+                    options: {
+                        devicePixelRatio: Math.max(2, window.devicePixelRatio || 1),
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right', // ← vertical
+                                labels: {
+                                    // Muestra "Categoría (n)"
+                                    generateLabels: function(chart) {
+                                        const orig = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                        const data = chart.data.datasets[0]?.data || [];
+                                        return orig.map((item, i) => ({
+                                            ...item,
+                                            text: `${item.text} (${data[i] ?? 0})`
+                                        }));
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        const v = ctx.parsed || 0;
+                                        const total = (ctx.dataset.data || []).reduce((a, b) => a + (+b || 0),
+                                            0) || 1;
+                                        const pct = Math.round((v * 100) / total);
+                                        return `${ctx.label}: ${v} (${pct}%)`;
+                                    }
+                                }
+                            },
+                            title: {
+                                display: !!title,
+                                text: title
+                            }
+                        }
+                    }
+                });
+            };
+
+            // Clonado profundo seguro
+            const deepClone = (obj) =>
+                (typeof structuredClone === 'function') ?
+                structuredClone(obj) :
+                JSON.parse(JSON.stringify(obj));
+
+            window.exportPie = async function(id, type = 'png', title = 'grafica', scale = 2) {
+                const baseChart = window._pies?.[id];
+                if (!baseChart) return;
+
+                const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const ext = (type === 'jpeg' || type === 'jpg') ? 'jpg' : 'png';
+                const mime = (ext === 'jpg') ? 'image/jpeg' : 'image/png';
+                const quality = (ext === 'jpg') ? 0.92 : 1.0;
+
+                // Tamaño visual actual del canvas (CSS)
+                const cssW = baseChart.canvas.clientWidth || baseChart.width;
+                const cssH = baseChart.canvas.clientHeight || baseChart.height;
+
+                // Canvas temporal a mayor resolución
+                const tmp = document.createElement('canvas');
+                tmp.width = Math.round(cssW * scale);
+                tmp.height = Math.round(cssH * scale);
+                const tctx = tmp.getContext('2d');
+
+                // Extrae datos mínimos del chart actual (solo primitivos)
+                const labels = (baseChart.data?.labels || []).slice();
+                const ds0 = baseChart.data?.datasets?.[0] || {};
+                const values = (ds0.data || []).map(Number);
+                // Si tenías colores definidos en el dataset original, se respetan; si no, Chart.js usará sus defaults
+                const backgroundColor = Array.isArray(ds0.backgroundColor) || typeof ds0.backgroundColor === 'string' ?
+                    ds0.backgroundColor :
+                    undefined;
+
+                // Config "limpia" para re-render offscreen
+                const cfg = {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        animation: false,
+                        devicePixelRatio: 1, // ya escalamos con el tamaño del canvas
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            },
+                            title: {
+                                display: !!title,
+                                text: title
+                            }
+                        }
+                    }
+                };
+
+                // Renderiza el chart temporal
+                const tmpChart = new Chart(tctx, cfg);
+
+                // Fondo blanco para JPG
+                if (ext === 'jpg') {
+                    tctx.save();
+                    tctx.globalCompositeOperation = 'destination-over';
+                    tctx.fillStyle = '#ffffff';
+                    tctx.fillRect(0, 0, tmp.width, tmp.height);
+                    tctx.restore();
+                }
+
+                // Descargar
+                const link = document.createElement('a');
+                link.download = `${title.replace(/\s+/g,'_')}_${stamp}.${ext}`;
+                link.href = tmp.toDataURL(mime, quality);
+                link.click();
+
+                // Limpieza
+                tmpChart.destroy();
+                tmp.width = tmp.height = 0;
+            };
+
+        </script>
+    @endpush
 @endonce
-
-
