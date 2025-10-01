@@ -18,12 +18,16 @@
                     <x-nav-link href="{{ route('mesadecontrol') }}" :active="request()->routeIs('mesadecontrol')">
                         Mesa de control
                     </x-nav-link>
-                    <x-nav-link href="{{ route('estadisticas') }}" :active="request()->routeIs('estadisticas')">
-                        Estadísticas
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('consultas') }}" :active="request()->routeIs('consultas')">
-                        Consultas
-                    </x-nav-link>
+                    @can('estadisticas')
+                        <x-nav-link href="{{ route('estadisticas') }}" :active="request()->routeIs('estadisticas')">
+                            Estadísticas
+                        </x-nav-link>
+                    @endcan
+                    @can('consultas')
+                        <x-nav-link href="{{ route('consultas') }}" :active="request()->routeIs('consultas')">
+                            Consultas
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 

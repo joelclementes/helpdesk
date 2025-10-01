@@ -21,6 +21,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 1,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Mesa-control'
             ],
             [
                 'user_data' => [
@@ -29,6 +30,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 1,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Mesa-control'
             ],
             [
                 'user_data' => [
@@ -37,6 +39,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 1,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Mesa-control'
             ],
             [
                 'user_data' => [
@@ -45,6 +48,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 1,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -53,6 +57,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 1,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -61,6 +66,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 2,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -69,6 +75,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 2,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -77,6 +84,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 2,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -85,6 +93,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 2,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -93,6 +102,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 2,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -101,6 +111,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 3,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -109,6 +120,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 3,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -117,6 +129,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 3,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -125,6 +138,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 4,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -133,6 +147,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 4,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -141,6 +156,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 4,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -149,6 +165,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 4,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -157,6 +174,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 5,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -165,6 +183,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 5,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -173,6 +192,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 5,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -181,6 +201,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 5,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -189,6 +210,7 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 5,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
             [
                 'user_data' => [
@@ -197,11 +219,13 @@ class UsuariosSeeder extends Seeder
                     'area_id' => 5,
                     'password' => bcrypt('123456789'),
                 ],
+                'role' => 'Tecnico'
             ],
         ];
 
         foreach ($usuarios as $usuario) {
             $user = User::create($usuario['user_data']);
+            $user->assignRole($usuario['role']);
         }
     }
 }

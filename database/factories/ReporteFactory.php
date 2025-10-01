@@ -12,7 +12,7 @@ class ReporteFactory extends Factory
 
     public function definition(): array
     {
-        $createdAt = $this->faker->dateTimeBetween('-12 days', 'now');
+        $createdAt = $this->faker->dateTimeBetween('-250 days', 'now');
         $estadoId  = $this->faker->numberBetween(1, 4); // 1-4 según EstadosSeeder
 
         $closedAt = null;

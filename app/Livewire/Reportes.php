@@ -43,6 +43,8 @@ class Reportes extends Component
     public ?int $cancelarReporteId = null;
     public string $cancelarComentario = '';
 
+    public $categoriasFiltradas = [];
+
     // Formulario
     public array $nuevoReporte = [
         'departamento_id'   => '',
@@ -52,6 +54,7 @@ class Reportes extends Component
         'categoria_id'  => '',
         'tecnico_id'    => '',
         'numero_copias'  => '',
+        'numero_inventario'  => '',
         'evento_id'  => '',
     ];
 
@@ -65,6 +68,7 @@ class Reportes extends Component
             'nuevoReporte.categoria_id'         => 'required|exists:categorias,id',
             'nuevoReporte.tecnico_id'           => 'required|exists:users,id',
             'nuevoReporte.numero_copias'        => 'nullable|integer|min:1',
+            'nuevoReporte.numero_inventario'    => 'nullable|string|max:10',
             'nuevoReporte.evento_id'            => 'nullable|exists:eventos,id',
         ];
     }
@@ -74,7 +78,6 @@ class Reportes extends Component
 
     public function abrirModalAtendido(int $id)
     {
-        // $reporte = Reporte::findOrFail($id);
         $reporte = Reporte::with('tecnicos')->findOrFail($id);
 
         $this->atendidoReporteId   = $id;
@@ -159,6 +162,7 @@ class Reportes extends Component
                 'capturo_user_id'          => auth()->id(),
                 'estado_id'                => 1,
                 'numero_copias'            => $this->nuevoReporte['numero_copias'] ?: null,
+                'numero_inventario'        => $this->nuevoReporte['numero_inventario'] ?: null,
                 'evento_id'                => $this->nuevoReporte['evento_id'] ?: null,
             ]);
 
@@ -170,7 +174,7 @@ class Reportes extends Component
                 ]);
             }
 
-            // (Opcional) si capturas múltiples técnicos en el form:
+            // (Opcional) Si se capturan múltiples técnicos en el form:
             // $reporte->tecnicos()->sync($this->nuevoReporte['tecnico_ids'] ?? []);
         });
 
@@ -285,14 +289,31 @@ class Reportes extends Component
         session()->flash('ok', 'Reporte cancelado correctamente.');
     }
 
+    public function updatedNuevoReporteAreaInformaticaId($areaId)
+    {
+        // dd($areaId);
+        $this->nuevoReporte['categoria_id'] = ''; // reset selección
+
+        if (empty($areaId)) {
+            $this->categoriasFiltradas = [];
+            return;
+        }
+
+        $this->categoriasFiltradas = Categoria::where('area_informatica_id', $areaId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+            
+    }
+
+
     public function render()
     {
         $departamentos = DepartamentoCongreso::orderBy('name')->get();
         $areasInformatica = AreasInformatica::orderBy('name')->get();
-        $categorias = Categoria::orderBy('name')->get();
+        // $categorias = Categoria::orderBy('name')->get();
         $tecnicos = User::orderBy('name')->get();
         $eventos = Evento::orderBy('date', 'desc')->activos()->get();
-
+        $todasCategorias   = Categoria::select('id','name')->orderBy('name')->get();
 
         // El scope `abiertos` se utiliza para filtrar los reportes que no están cerrados ni cancelados.
         // está establecido en el modelo Reporte.php
@@ -304,7 +325,14 @@ class Reportes extends Component
         $this->totalPendientes = Reporte::whereHas('estado', fn($q) => $q->where('name', 'Pendiente'))->count();
         $this->totalAtendidos  = Reporte::whereHas('estado', fn($q) => $q->where('name', 'Atendido'))->count();
 
-        return view('livewire.reportes', compact('reportes', 'departamentos', 'areasInformatica', 'categorias', 'tecnicos', 'eventos'));
+        return view('livewire.reportes', compact(
+            'reportes',
+            'departamentos',
+            'areasInformatica',
+            'tecnicos',
+            'eventos',
+            'todasCategorias'
+        ));
     }
 
     public function messages()

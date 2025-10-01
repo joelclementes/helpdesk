@@ -38,4 +38,6 @@ Route::middleware([
     Route::get('/consultas', function () {
         return view('consultas');
     })->name('consultas');
+
+    
 });

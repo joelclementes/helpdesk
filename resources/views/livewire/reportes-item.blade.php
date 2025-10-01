@@ -29,6 +29,7 @@
     </div>
     <div class="px-4 py-1 bg-slate-100 flex flex-col justify-between items-start">
         <span class="text-xs text-gray-500">Solicitó: <strong>{{ $reporte->solicitante }}</strong></span>
+        <span class="text-xs text-gray-500">Depto: <strong>{{ $reporte->departamento->name }}</strong></span>
     </div>
     @if ($reporte->comentarios->count() > 0)
         {{-- Comentarios --}}
@@ -66,31 +67,38 @@
     {{-- Footer --}}
     @if ($mostrarFooter)
         <div class="px-0 bg-gray-50 border-t flex divide-x text-sm text-gray-600">
-            <button wire:click="atender"
-                class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-                <i class="fa-solid fa-check text-green-600"></i>
-                <span>Atendido</span>
-            </button>
-
-            @if ($reporte->estado->name == 'Atendido')
-                <button wire:click="cerrar"
+            @can('atendido')
+                <button wire:click="atender"
                     class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-                    <i class="fa-solid fa-folder-closed text-vino-600"></i>
-                    <span>Cerrar</span>
+                    <i class="fa-solid fa-check text-green-600"></i>
+                    <span>Atendido</span>
                 </button>
-            @endif
 
-            <button wire:click="cancelar"
-                class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-                <i class="fa-solid fa-circle-xmark text-red-600"></i>
-                <span>Cancelar</span>
-            </button>
 
-            <button wire:click="comentar"
-                class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
-                <i class="fa-regular fa-comment-dots text-gray-600"></i>
-                <span>Comentar</span>
-            </button>
+                @if ($reporte->estado->name == 'Atendido')
+                    <button wire:click="cerrar"
+                        class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-folder-closed text-vino-600"></i>
+                        <span>Cerrar</span>
+                    </button>
+                @endif
+            @endcan
+
+            @can('cancelar')
+                <button wire:click="cancelar"
+                    class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-circle-xmark text-red-600"></i>
+                    <span>Cancelar</span>
+                </button>
+            @endcan
+
+            @can('comentar')
+                <button wire:click="comentar"
+                    class="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-gray-100 transition">
+                    <i class="fa-regular fa-comment-dots text-gray-600"></i>
+                    <span>Comentar</span>
+                </button>
+            @endcan
         </div>
     @endif
 </div>
