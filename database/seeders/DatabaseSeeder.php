@@ -22,8 +22,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            AreasInformaticaSeeder::class,
+            RolSeeder::class,
             UsuariosSeeder::class,
+            AreasInformaticaSeeder::class,
             CategoriasSeeder::class,
             DepartamentosCongresoSeeder::class,
             EstadosSeeder::class,
