@@ -73,6 +73,7 @@ class CategoriasSeeder extends Seeder
             ['name' => 'Mantenimiento de aplicaciones','area_informatica_id' => 3],
             ['name' => 'Mantenimiento de pagina institucional','area_informatica_id' => 3],
             ['name' => 'Transmisión de Video y Audio','area_informatica_id' => 2],
+            ['name' => 'Apoyo a sesiones','area_informatica_id' => 1],
         ];
 
         foreach ($categorias as $categoria) {
