@@ -29,6 +29,13 @@
                             Consultas
                         </x-nav-link>
                     @endcan
+                    @can('administrar')
+                        <x-nav-link href="{{ url('/admin') }}" 
+                            target="_blank" rel="noopener noreferrer"
+                            :active="request()->routeIs('consultas')">
+                            Administrar catálogos
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
             <div class="hidden sm:flex sm:items-center sm:ms-6">

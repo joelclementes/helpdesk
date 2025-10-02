@@ -9,4 +9,8 @@ class DepartamentoCongreso extends Model
 {
     use HasFactory;
     protected $table = 'departamento_congreso';
+
+    protected $fillable = [
+        'name','extension'
+    ];
 }
