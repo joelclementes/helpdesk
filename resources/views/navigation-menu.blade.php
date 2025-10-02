@@ -6,7 +6,8 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('mesadecontrol') }}">
-                        <x-application-mark class="block h-9 w-auto" />
+                        {{-- <x-application-mark class="block h-9 w-auto" /> --}}
+                        <img src="/assets/images/customer-service-35.png" alt="App" class="h-20 w-auto" />
                     </a>
                 </div>
 
@@ -30,7 +31,6 @@
                     @endcan
                 </div>
             </div>
-
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
