@@ -42,6 +42,7 @@ class DepartamentoCongresoResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label('Nombre')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('extension')
                     ->label('Extensión')
