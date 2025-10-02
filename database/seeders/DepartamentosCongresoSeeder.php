@@ -87,7 +87,6 @@ class DepartamentosCongresoSeeder extends Seeder
             ["name" => "Dip. Lucia Begoña Canales Barturen", "extension"=>""],
             ["name" => "Dip. Luis Vicente Aguilar Castillo", "extension"=>""],
             ["name" => "Dip. Luz Alicia Delfín Rodríguez", "extension"=>""],
-            ["name" => "Dip. Miguel David Hermida Copado", "extension"=>""],
             ["name" => "Dip. Miguel Guillermo Pintos Guillén", "extension"=>""],
             ["name" => "Dip. Miriam García Guzmán", "extension"=>""],
             ["name" => "Dip. Montserrat Ortega Ruiz", "extension"=>""],
