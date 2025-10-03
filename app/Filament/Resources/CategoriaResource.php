@@ -25,15 +25,15 @@ class CategoriaResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                ->label('Nombre de la categoría')
+                    ->label('Nombre de la categoría')
                     ->required()
                     ->maxLength(125),
-        Forms\Components\Select::make('area_informatica_id')
-            ->label('Área de informática')
-            ->relationship('area', 'name')   // << muestra nombres, guarda el id
-            ->searchable()
-            ->preload()
-            ->required(),
+                Forms\Components\Select::make('area_informatica_id')
+                    ->label('Área de informática')
+                    ->relationship('area', 'name')   // << muestra nombres, guarda el id
+                    ->searchable()
+                    ->preload()
+                    ->required(),
             ]);
     }
 
