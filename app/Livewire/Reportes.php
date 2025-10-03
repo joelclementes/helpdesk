@@ -302,26 +302,43 @@ class Reportes extends Component
         $this->categoriasFiltradas = Categoria::where('area_informatica_id', $areaId)
             ->orderBy('name')
             ->get(['id', 'name']);
-            
     }
-
 
     public function render()
     {
-        $departamentos = DepartamentoCongreso::orderBy('name')->get();
-        $areasInformatica = AreasInformatica::orderBy('name')->get();
-        // $categorias = Categoria::orderBy('name')->get();
-        $tecnicos = User::orderBy('name')->get();
-        $eventos = Evento::orderBy('date', 'desc')->activos()->get();
-        $todasCategorias   = Categoria::select('id','name')->orderBy('name')->get();
+        $departamentos     = DepartamentoCongreso::orderBy('name')->get();
+        $areasInformatica  = AreasInformatica::orderBy('name')->get();
+        $tecnicos          = User::orderBy('name')->get();
+        $eventos           = Evento::orderBy('date', 'desc')->activos()->get();
+        $todasCategorias   = Categoria::select('id', 'name')->orderBy('name')->get();
 
-        // El scope `abiertos` se utiliza para filtrar los reportes que no están cerrados ni cancelados.
-        // está establecido en el modelo Reporte.php
-        $reportes = Reporte::with(['categoria', 'tecnico', 'estado', 'comentarios.user'])
-            ->abiertos()
-            ->latest()
-            ->paginate(5);
+        $user  = auth()->user();
+        $uid   = $user->id;
 
+        // Base: solo reportes abiertos, con relaciones
+        $baseQuery = Reporte::with(['categoria', 'tecnico', 'estado', 'comentarios.user'])
+            ->abiertos()   // tu scope: no cerrados/ni cancelados
+            ->latest();
+
+        if ($user->hasRole('Mesa-control')) {
+            // 1) Mesa-Control: ve TODOS los abiertos
+            $reportes = $baseQuery->paginate(5);
+        } elseif ($user->hasRole('Tecnico')) {
+            // 2) Tecnico: ve SOLO los abiertos asignados a él
+            //    - como técnico principal (tecnico_user_id)
+            //    - o asignado en la pivote (relación tecnicos)
+            $reportes = $baseQuery
+                ->where(function ($q) use ($uid) {
+                    $q->where('tecnico_user_id', $uid)
+                        ->orWhereHas('tecnicos', fn($t) => $t->where('users.id', $uid));
+                })
+                ->paginate(5);
+        } else {
+            // (Opcional) Sin rol reconocido: no mostrar nada
+            $reportes = $baseQuery->whereRaw('1=0')->paginate(5);
+        }
+
+        // Totales (si quieres que también respeten el rol, aplica el mismo filtro que arriba)
         $this->totalPendientes = Reporte::whereHas('estado', fn($q) => $q->where('name', 'Pendiente'))->count();
         $this->totalAtendidos  = Reporte::whereHas('estado', fn($q) => $q->where('name', 'Atendido'))->count();
 
@@ -334,6 +351,7 @@ class Reportes extends Component
             'todasCategorias'
         ));
     }
+
 
     public function messages()
     {

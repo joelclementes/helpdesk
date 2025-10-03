@@ -10,7 +10,7 @@
         @endif
 
         <div class="flex justify-between w-full text-xs text-gray-500">
-            <span>Capt: <strong>{{ $reporte->capturista->name }}</strong></span>
+            <span>Capturó: <strong>{{ $reporte->capturista->name }}</strong></span>
             <span>Fecha: <strong>{{ $reporte->created_at->format('d/m/Y') }} -
                     {{ $reporte->tiempo_transcurrido }}</strong></span>
             @if ($mostrarEstado)

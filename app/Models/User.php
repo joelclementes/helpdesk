@@ -10,6 +10,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
+use \Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -29,6 +31,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'area_id'
     ];
 
     /**
@@ -66,5 +69,19 @@ class User extends Authenticatable
         return $this->belongsToMany(Reporte::class, 'reporte_user')
             ->withPivot(['rol', 'asignado_at'])
             ->withTimestamps();
+    }
+
+    public function area()
+    {
+        // FK = area_id, tabla areas = 'area_informatica'
+        return $this->belongsTo(AreasInformatica::class, 'area_id');
+    }
+
+    protected function password(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return Attribute::make(
+            set: fn(?string $value) =>
+            blank($value) ? null : (Hash::needsRehash($value) ? Hash::make($value) : $value)
+        );
     }
 }

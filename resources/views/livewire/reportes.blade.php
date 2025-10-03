@@ -43,7 +43,40 @@
     {{-- Filtros --}}
 
     {{-- Listado de cards existentes --}}
-    <div class="space-y-3">
+    {{-- Listado de cards existentes --}}
+<div class="space-y-3">
+    @forelse ($reportes as $reporte)
+        <livewire:reportes-item :reporte="$reporte" :key="'reportes-item-' . $reporte->id" />
+    @empty
+        {{-- Card: no hay reportes --}}
+        <div class="bg-white shadow rounded-lg border border-gray-200 p-8 text-center">
+            <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                {{-- Si tienes heroicons --}}
+                <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M20 13V7a2 2 0 00-2-2h-3l-1-1h-4l-1 1H5a2 2 0 00-2 2v6m16 0v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4m16 0H4" />
+                </svg>
+            </div>
+            <h3 class="text-base font-semibold text-gray-800">No hay reportes para mostrar</h3>
+            <p class="mt-1 text-sm text-gray-500">Cuando se capture el primero aparecerá aquí.</p>
+
+            @can('NuevoReporte')
+                <x-button wire:click="abrirModalCrear" class="mt-4 bg-vino-700 hover:bg-vino-800">
+                    Crear primer reporte
+                </x-button>
+            @endcan
+        </div>
+    @endforelse
+</div>
+
+{{-- Paginación (solo si hay páginas) --}}
+@if (method_exists($reportes, 'hasPages') && $reportes->hasPages())
+    <div>
+        {{ $reportes->links() }}
+    </div>
+@endif
+
+    {{-- <div class="space-y-3">
         @foreach ($reportes as $reporte)
             <livewire:reportes-item :reporte="$reporte" :key="'reportes-item-' . $reporte->id" />
         @endforeach
@@ -51,7 +84,7 @@
 
     <div>
         {{ $reportes->links() }}
-    </div>
+    </div> --}}
 
     {{-- MODAL: Crear reporte --}}
     <x-dialog-modal wire:model="showCreateModal" wire:key="create-reporte-modal" maxWidth="2xl">
