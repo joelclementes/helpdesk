@@ -57,8 +57,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-                // \App\Http\Middleware\Authenticate::class,
-                // 'role:Mesa-Control',
+                \App\Http\Middleware\Authenticate::class,
+                'can:administrar',
             ]);
     }
 }

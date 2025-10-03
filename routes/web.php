@@ -18,26 +18,21 @@ Route::get('/', function () {
     return view('mesadecontrol');
 })->middleware('auth');
 
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        // return view('dashboard');
-        return view('mesadecontrol');
-    })->name('dashboard');
+    Route::get('/dashboard', fn() => view('mesadecontrol'))->name('dashboard');
 
-    Route::get('/mesadecontrol', function () {
-        return view('mesadecontrol');
-    })->name('mesadecontrol');
+    Route::get('/mesadecontrol', fn() => view('mesadecontrol'))->name('mesadecontrol');
 
-    Route::get('/estadisticas', function () {
-        return view('estadisticas');
-    })->name('estadisticas');
-    Route::get('/consultas', function () {
-        return view('consultas');
-    })->name('consultas');
+    Route::get('/estadisticas', fn() => view('estadisticas'))
+        ->middleware('can:estadisticas')
+        ->name('estadisticas');
 
-    
+    Route::get('/consultas', fn() => view('consultas'))
+        ->middleware('can:consultas')
+        ->name('consultas');
 });

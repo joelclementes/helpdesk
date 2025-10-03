@@ -13,6 +13,9 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Hash;
 use \Illuminate\Database\Eloquent\Casts\Attribute;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+
 class User extends Authenticatable
 {
     use HasApiTokens;
