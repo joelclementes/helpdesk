@@ -11,7 +11,7 @@
     @can('NuevoReporte')
     <div class="bg-white shadow rounded-lg overflow-hidden border border-vino-400">
         <div class="px-4 py-3 bg-gray-100 border-b flex items-center justify-between">
-            <h3 class="font-semibold text-gray-800 text-sm">Reportes</h3>
+            <h3 class="font-semibold text-gray-800 text-sm">Reportes:</h3>
             <x-button wire:click="abrirModalCrear" class="bg-gray-600 hover:bg-gray-800">
                 Nuevo reporte
             </x-button>
@@ -42,7 +42,6 @@
 
     {{-- Filtros --}}
 
-    {{-- Listado de cards existentes --}}
     {{-- Listado de cards existentes --}}
 <div class="space-y-3">
     @forelse ($reportes as $reporte)
